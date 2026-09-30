@@ -337,12 +337,18 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def run(argv: list[str] | None = None) -> int:
+    from spotifymix.spotify.auth import AuthError
+    from spotifymix.spotify.client import SpotifyError
+
     args = build_parser().parse_args(argv)
     try:
         return args.func(args)
     except ConfigError as exc:
         print(f"Configuration problem: {exc}", file=sys.stderr)
         return 2
+    except (SpotifyError, AuthError) as exc:
+        print(f"Spotify problem: {exc}", file=sys.stderr)
+        return 1
     except KeyboardInterrupt:
         return 130
 

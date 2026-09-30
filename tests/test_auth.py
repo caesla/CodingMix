@@ -128,3 +128,8 @@ def test_interactive_login_rejects_wrong_state(tmp_path):
             token_client(lambda r: httpx.Response(500)), "cid", port, store,
             open_browser=_browser_that_calls_back(port, state="forged"), timeout=10,
         )
+
+
+def test_scopes_allow_market_from_token():
+    # Search with market=from_token returns 403 "Insufficient client scope" without it.
+    assert "user-read-private" in auth.SCOPES

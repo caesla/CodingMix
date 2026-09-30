@@ -28,6 +28,7 @@ SCOPES = (
     "user-read-playback-state",
     "user-read-currently-playing",
     "user-modify-playback-state",
+    "user-read-private",  # needed by search with market=from_token
 )
 KEYRING_SERVICE = "spotifymix"
 KEYRING_USER = "refresh_token"

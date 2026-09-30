@@ -102,3 +102,15 @@ def test_check_genres_reports_weak_labels(monkeypatch, capsys):
     out = capsys.readouterr().out
     assert "deep house (60)" in out
     assert "fewer than 50" in out
+
+
+def test_spotify_errors_become_readable_messages(monkeypatch, capsys):
+    from spotifymix.spotify.client import SpotifyError
+
+    fake = FakeSpotify()
+    fake.error = SpotifyError("Spotify returned HTTP 403 for /search")
+    monkeypatch.setattr(cli, "_client", lambda cfg: fake)
+    assert cli.run(["check-genres"]) == 1
+    err = capsys.readouterr().err
+    assert "HTTP 403" in err
+    assert "Traceback" not in err
