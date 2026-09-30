@@ -139,6 +139,15 @@ def test_add_to_queue_sends_uri_and_device():
     assert params["uri"] == "spotify:track:x" and params["device_id"] == "d1"
 
 
+def test_add_to_queue_accepts_the_real_200_with_a_plain_text_body():
+    # Documented as 204, but on 2026-09-30 Spotify answered 200 with a
+    # 27 byte opaque id, no content type.
+    api = FakeApi()
+    api.on("POST", "/me/player/queue", httpx.Response(200, content=b"x" * 27))
+    client, _ = make_client(api)
+    assert client.add_to_queue("spotify:track:x") is None
+
+
 def test_devices():
     api = FakeApi()
     api.on("GET", "/me/player/devices", httpx.Response(200, json={"devices": [

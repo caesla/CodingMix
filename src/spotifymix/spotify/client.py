@@ -89,7 +89,9 @@ class SpotifyClient:
                 raise SpotifyUnavailable(f"Spotify returned HTTP {response.status_code}")
             if response.status_code >= 400:
                 raise SpotifyError(f"Spotify returned HTTP {response.status_code} for {path}")
-            if response.status_code in (202, 204) or not response.content:
+            # Write calls return no data we use, and their bodies are not always
+            # JSON (the queue call answers 200 with a plain text id).
+            if method != "GET" or response.status_code in (202, 204) or not response.content:
                 return None
             return response.json()
         raise LoginRequired("Spotify rejected a fresh access token; run `spotifymix login`")
