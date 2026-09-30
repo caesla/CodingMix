@@ -4639,7 +4639,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `paths`, `config`, `server.call_service`, `server.ServiceDown`, `claude_settings`, `autostart`, `spotify.auth`, `spotify.client`, `service.run`.
 - Produces: `parse_duration(text: str) -> int`; `format_status(status: dict) -> str`; `build_parser() -> argparse.ArgumentParser`; `run(argv: list[str] | None = None) -> int`; `main() -> None`. Module-level helper `_client(cfg: Config)` (monkeypatched in tests). Commands: `setup`, `login`, `logout`, `status`, `mode <mode> [--for DURATION]`, `pause <DURATION>`, `resume`, `modes`, `check-genres`, `hooks install|uninstall [--yes]`, `service run|install|uninstall`, `uninstall [--yes]`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/test_cli.py`:
 ```python
@@ -4749,12 +4749,12 @@ def test_check_genres_reports_weak_labels(monkeypatch, capsys):
     assert "fewer than 50" in out
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_cli.py -v`
 Expected: FAIL with `ImportError: cannot import name 'cli'`.
 
-- [ ] **Step 3: Implement `src/spotifymix/cli.py`**
+- [x] **Step 3: Implement `src/spotifymix/cli.py`**
 
 ```python
 """The `spotifymix` command."""
@@ -5115,12 +5115,12 @@ def main() -> None:
     sys.exit(run())
 ```
 
-- [ ] **Step 4: Run tests and lint**
+- [x] **Step 4: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed.
 
-- [ ] **Step 5: Smoke-test the installed commands**
+- [x] **Step 5: Smoke-test the installed commands**
 
 Run:
 ```bash
@@ -5130,7 +5130,7 @@ echo '{"hook_event_name":"Stop"}' | uv run spotifymix-hook; echo "exit=$?"
 ```
 Expected: `spotifymix 0.1.0`; the list of 11 modes; `exit=0` with no output.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A
