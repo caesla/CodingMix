@@ -922,7 +922,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Produces (models): `make_name_key(name: str, artist: str) -> str`; `parse_iso(ts: str) -> int`; frozen dataclasses `Track(id, uri, name, artists: tuple[str, ...], duration_ms: int)` with property `name_key` and `Track.from_json(d: dict | None) -> Track | None`; `Playback(is_playing: bool, device_id: str | None, device_name: str, device_type: str, item: Track | None, progress_ms: int, context_uri: str | None)` with `Playback.from_json(d: dict) -> Playback`; `Play(track: Track, played_at: int)`; `SavedTrack(track: Track, added_at: int)`; `Device(id: str | None, name: str, type: str, is_active: bool)`.
 - Produces (store): `Store(path: str | Path)` with `add_plays(plays: Iterable[Play]) -> int`, `upsert_saved(saved: Iterable[SavedTrack]) -> None`, `add_proposed(track: Track, mode: str, ts: float) -> None`, `is_excluded(track: Track, now: float, days: int) -> bool`, `recent_proposed_ids(limit: int = 100) -> set[str]`, `log_event(ts: float, event: str, mode: str | None) -> None`, `recent_events(limit: int = 10) -> list[tuple[int, str, str | None]]`, `counts(now: float, days: int) -> dict[str, int]`, `prune(now: float, keep_days: int = 8) -> None`, `get_kv(key: str) -> str | None`, `set_kv(key: str, value: str) -> None`, `close() -> None`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/test_models.py`:
 ```python
@@ -1044,12 +1044,12 @@ def test_kv_round_trip(tmp_path):
     store.close()
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_models.py tests/test_store.py -v`
 Expected: FAIL with `ModuleNotFoundError`.
 
-- [ ] **Step 3: Implement `src/spotifymix/models.py`**
+- [x] **Step 3: Implement `src/spotifymix/models.py`**
 
 ```python
 """Spotify data shapes used across the service."""
@@ -1152,7 +1152,7 @@ class Device:
     is_active: bool
 ```
 
-- [ ] **Step 4: Implement `src/spotifymix/store.py`**
+- [x] **Step 4: Implement `src/spotifymix/store.py`**
 
 ```python
 """SQLite store: 7-day history of plays, saved tracks and proposals."""
@@ -1281,12 +1281,12 @@ class Store:
         self._write("INSERT OR REPLACE INTO kv VALUES (?, ?)", [(key, value)])
 ```
 
-- [ ] **Step 5: Run tests and lint**
+- [x] **Step 5: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A
