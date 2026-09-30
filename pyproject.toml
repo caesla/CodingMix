@@ -1,0 +1,39 @@
+[project]
+name = "spotifymix"
+version = "0.1.0"
+description = "Fresh Spotify music that follows what you are doing in Claude Code."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+    "keyring>=25",
+    "platformdirs>=4",
+]
+
+[project.scripts]
+spotifymix = "spotifymix.cli:main"
+spotifymix-hook = "spotifymix.hook:main"
+
+[project.gui-scripts]
+spotifymix-service = "spotifymix.service:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/spotifymix"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

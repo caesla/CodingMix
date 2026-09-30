@@ -84,7 +84,7 @@ tests/
 **Interfaces:**
 - Produces: `paths.config_dir() -> Path`, `paths.data_dir() -> Path`, `paths.log_dir() -> Path`, `paths.config_file() -> Path`, `paths.db_file() -> Path`, `paths.token_fallback_file() -> Path`, `paths.service_token_file() -> Path`, `paths.claude_config_dir() -> Path`, `paths.write_private(path: Path, text: str) -> None`, `paths.ensure_service_token() -> str`. Fixture `isolated_home` (autouse).
 
-- [ ] **Step 1: Set the git identity and verify it**
+- [x] **Step 1: Set the git identity and verify it**
 
 ```bash
 git config user.name "caesla"
@@ -93,7 +93,7 @@ git config user.name && git config user.email
 ```
 Expected: `caesla` and `219047344+caesla@users.noreply.github.com`.
 
-- [ ] **Step 2: Create the project files**
+- [x] **Step 2: Create the project files**
 
 `pyproject.toml`:
 ```toml
@@ -206,7 +206,7 @@ jobs:
 __version__ = "0.1.0"
 ```
 
-- [ ] **Step 3: Write the failing tests**
+- [x] **Step 3: Write the failing tests**
 
 `tests/conftest.py`:
 ```python
@@ -256,12 +256,12 @@ def test_service_token_is_created_once():
     assert paths.service_token_file().read_text(encoding="utf-8").strip() == first
 ```
 
-- [ ] **Step 4: Run tests to verify they fail**
+- [x] **Step 4: Run tests to verify they fail**
 
 Run: `uv sync && uv run pytest tests/test_paths.py -v`
 Expected: FAIL with `ImportError: cannot import name 'paths'`.
 
-- [ ] **Step 5: Implement `src/spotifymix/paths.py`**
+- [x] **Step 5: Implement `src/spotifymix/paths.py`**
 
 ```python
 """Filesystem locations. Everything personal lives in user directories, never in the repo."""
@@ -344,12 +344,12 @@ def ensure_service_token() -> str:
     return token
 ```
 
-- [ ] **Step 6: Run tests and lint**
+- [x] **Step 6: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: 4 passed, ruff `All checks passed!`.
 
-- [ ] **Step 7: Pin gitleaks to its latest release and commit**
+- [x] **Step 7: Pin gitleaks to its latest release and commit**
 
 ```bash
 uv tool install pre-commit
