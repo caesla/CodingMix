@@ -1,0 +1,212 @@
+# SpotifyMix defaults. Override any value in the user config.toml
+# (run `spotifymix status` to see where it lives).
+
+[spotify]
+client_id = ""
+redirect_port = 47616
+device_name = ""
+
+[service]
+port = 47615
+window_seconds = 180
+switch_after_seconds = 180
+queue_lead_seconds = 20
+exclusion_days = 7
+recent_poll_seconds = 600
+saved_poll_seconds = 1800
+manual_default_seconds = 3600
+
+[modes.planning]
+label = "Planning"
+genres = ["ambient"]
+fallback = ["chill"]
+
+[modes.brainstorming]
+label = "Brainstorming"
+genres = ["post-rock", "nu jazz"]
+fallback = ["jazz"]
+
+[modes.coding]
+label = "Coding"
+genres = ["deep house", "tech house"]
+fallback = ["house"]
+
+[modes.debugging]
+label = "Debugging"
+genres = ["hip hop", "rap"]
+fallback = ["trap"]
+
+[modes.testing]
+label = "Testing"
+genres = ["techno"]
+fallback = ["minimal techno"]
+
+[modes.reviewing]
+label = "Code review"
+genres = ["lo-fi hip hop"]
+fallback = ["chillhop"]
+
+[modes.exploring]
+label = "Exploring and research"
+genres = ["downtempo", "trip hop"]
+fallback = ["chill"]
+
+[modes.writing]
+label = "Writing"
+genres = ["deep house", "tech house"]
+fallback = ["house"]
+
+[modes.ui]
+label = "User interfaces"
+genres = ["synthwave", "nu disco"]
+fallback = ["electronic"]
+
+[modes.release]
+label = "Release"
+genres = ["funk", "disco"]
+fallback = ["soul"]
+
+[modes.orchestrating]
+label = "Orchestrating agents"
+genres = ["deep house", "tech house"]
+fallback = ["house"]
+
+# Classification rules. For each hook event the FIRST matching rule votes.
+# All regexes are case-insensitive. Keys: events, tools (glob), permission_mode,
+# skill, command, path, subagent_type, agent_type, prompt, weight.
+
+[[rules]]
+mode = "debugging"
+events = ["PostToolUseFailure"]
+
+[[rules]]
+mode = "debugging"
+events = ["PreToolUse"]
+tools = ["Skill"]
+skill = "debug"
+
+[[rules]]
+mode = "planning"
+permission_mode = "plan"
+
+[[rules]]
+mode = "planning"
+events = ["PreToolUse"]
+tools = ["EnterPlanMode", "ExitPlanMode"]
+
+[[rules]]
+mode = "planning"
+events = ["PreToolUse"]
+tools = ["Skill"]
+skill = "plan"
+
+[[rules]]
+mode = "brainstorming"
+events = ["PreToolUse"]
+tools = ["Skill"]
+skill = "brainstorm"
+
+[[rules]]
+mode = "brainstorming"
+events = ["PreToolUse"]
+tools = ["AskUserQuestion"]
+
+[[rules]]
+mode = "release"
+events = ["PreToolUse"]
+tools = ["Bash", "PowerShell"]
+command = '\bgit\s+(commit|push|tag|merge)\b|\bgh\s+(pr\s+(create|merge)|release)\b|\bdeploy\b'
+
+[[rules]]
+mode = "testing"
+events = ["PreToolUse"]
+tools = ["Bash", "PowerShell"]
+command = '\b(pytest|vitest|jest|mocha|playwright\s+test|go\s+test|cargo\s+test|dotnet\s+test|(npm|pnpm|yarn|bun)\s+(run\s+)?test)\b'
+
+[[rules]]
+mode = "reviewing"
+events = ["PreToolUse"]
+tools = ["Skill"]
+skill = "review|simplify"
+
+[[rules]]
+mode = "reviewing"
+events = ["PreToolUse"]
+tools = ["Bash", "PowerShell"]
+command = '\bgit\s+(diff|show)\b|\bgh\s+pr\s+(diff|view)\b'
+
+[[rules]]
+mode = "exploring"
+events = ["SubagentStart"]
+agent_type = '^explore$'
+
+[[rules]]
+mode = "orchestrating"
+events = ["SubagentStart"]
+
+[[rules]]
+mode = "orchestrating"
+events = ["PreToolUse"]
+tools = ["Workflow"]
+
+[[rules]]
+mode = "ui"
+events = ["PreToolUse"]
+tools = ["mcp__claude-in-chrome__*", "mcp__*playwright*"]
+
+[[rules]]
+mode = "ui"
+events = ["PreToolUse"]
+tools = ["Edit", "Write", "MultiEdit"]
+path = '\.(css|scss|sass|less|html|jsx|tsx|vue|svelte|astro)$'
+
+[[rules]]
+mode = "writing"
+events = ["PreToolUse"]
+tools = ["Edit", "Write", "MultiEdit"]
+path = '\.(md|mdx|txt|rst|adoc|docx)$'
+
+[[rules]]
+mode = "coding"
+events = ["PreToolUse"]
+tools = ["Edit", "Write", "MultiEdit", "NotebookEdit"]
+
+[[rules]]
+mode = "exploring"
+events = ["PreToolUse"]
+tools = ["Agent", "Task"]
+subagent_type = 'explore'
+
+[[rules]]
+mode = "orchestrating"
+events = ["PreToolUse"]
+tools = ["Agent", "Task"]
+
+[[rules]]
+mode = "exploring"
+events = ["PreToolUse"]
+tools = ["Read", "Grep", "Glob", "WebSearch", "WebFetch", "LSP"]
+
+[[rules]]
+mode = "debugging"
+events = ["UserPromptSubmit"]
+prompt = "\\b(bug|errore|error|non funziona|doesn'?t work|broken|crash|traceback|stack ?trace)\\b"
+weight = 0.5
+
+[[rules]]
+mode = "planning"
+events = ["UserPromptSubmit"]
+prompt = "\\b(piano|plan|pianifica|roadmap)\\b"
+weight = 0.5
+
+[[rules]]
+mode = "brainstorming"
+events = ["UserPromptSubmit"]
+prompt = "\\b(idea|idee|brainstorm\\w*)\\b"
+weight = 0.5
+
+[[rules]]
+mode = "reviewing"
+events = ["UserPromptSubmit"]
+prompt = "\\b(review|revisiona|rivedi)\\b"
+weight = 0.5

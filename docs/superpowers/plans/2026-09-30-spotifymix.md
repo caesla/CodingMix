@@ -374,7 +374,7 @@ Expected: the commit runs the gitleaks hook and reports `Passed`. If pre-commit 
 - Consumes: `paths.write_private`.
 - Produces: dataclasses `ModeConfig(id: str, label: str, genres: tuple[str, ...], fallback: tuple[str, ...])`, `Rule(mode: str, events: tuple[str, ...] = (), tools: tuple[str, ...] = (), permission_mode: str | None = None, skill: str | None = None, command: str | None = None, path: str | None = None, subagent_type: str | None = None, agent_type: str | None = None, prompt: str | None = None, weight: float = 1.0)`, `Config(client_id: str | None, redirect_port: int, device_name: str | None, service_port: int, window_seconds: int, switch_after_seconds: int, queue_lead_seconds: int, exclusion_days: int, recent_poll_seconds: int, saved_poll_seconds: int, manual_default_seconds: int, modes: dict[str, ModeConfig], rules: tuple[Rule, ...])`; `ConfigError(Exception)`; `load_config(user_file: Path | None = None) -> Config`; `save_user_settings(user_file: Path, **spotify_values: str | int | None) -> None`; `dump_toml(data: dict) -> str`.
 
-- [ ] **Step 1: Create `src/spotifymix/defaults.toml`**
+- [x] **Step 1: Create `src/spotifymix/defaults.toml`**
 
 ```toml
 # SpotifyMix defaults. Override any value in the user config.toml
@@ -591,7 +591,7 @@ prompt = "\\b(review|revisiona|rivedi)\\b"
 weight = 0.5
 ```
 
-- [ ] **Step 2: Write the failing tests**
+- [x] **Step 2: Write the failing tests**
 
 `tests/test_config.py`:
 ```python
@@ -671,12 +671,12 @@ def test_dump_toml_round_trips():
     assert tomllib.loads(dump_toml(data)) == data
 ```
 
-- [ ] **Step 3: Run tests to verify they fail**
+- [x] **Step 3: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_config.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'spotifymix.config'`.
 
-- [ ] **Step 4: Implement `src/spotifymix/config.py`**
+- [x] **Step 4: Implement `src/spotifymix/config.py`**
 
 ```python
 """Configuration: packaged defaults merged with the user's config.toml."""
@@ -896,12 +896,12 @@ def save_user_settings(user_file: Path, **spotify_values: str | int | None) -> N
     user_file.write_text(dump_toml(data), encoding="utf-8")
 ```
 
-- [ ] **Step 5: Run tests and lint**
+- [x] **Step 5: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A
