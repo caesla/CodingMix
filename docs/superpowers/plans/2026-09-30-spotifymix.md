@@ -1606,7 +1606,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Produces: `SCOPES: tuple[str, ...]`; `AuthError(Exception)`; `LoginRequired(AuthError)`; `TokenSet(access_token: str, expires_at: float, refresh_token: str)`; `make_verifier() -> str`; `make_challenge(verifier: str) -> str`; `redirect_uri(port: int) -> str`; `build_authorize_url(client_id: str, redirect: str, challenge: str, state: str) -> str`; `exchange_code(http: httpx.Client, client_id: str, code: str, redirect: str, verifier: str, now: float) -> TokenSet`; `refresh_access(http: httpx.Client, client_id: str, refresh_token: str, now: float) -> TokenSet`; `TokenStore(fallback_file: Path, backend: Any = "default")` with `load() -> str | None`, `save(refresh_token: str) -> str` (returns `"keyring"` or `"file"`), `clear() -> None`; `login_interactive(http, client_id, port, store, open_browser=webbrowser.open, timeout=300.0, clock=time.time) -> TokenSet`.
 - Produces (tests/fakes.py): `FakeKeyring(broken: bool = False)`, `free_port() -> int`.
 
-- [ ] **Step 1: Create `tests/fakes.py`**
+- [x] **Step 1: Create `tests/fakes.py`**
 
 ```python
 """Test doubles shared by several test modules. Never touches network or OS keyring."""
@@ -1644,7 +1644,7 @@ def free_port() -> int:
         return sock.getsockname()[1]
 ```
 
-- [ ] **Step 2: Write the failing tests**
+- [x] **Step 2: Write the failing tests**
 
 `tests/test_auth.py`:
 ```python
@@ -1780,12 +1780,12 @@ def test_interactive_login_rejects_wrong_state(tmp_path):
         )
 ```
 
-- [ ] **Step 3: Run tests to verify they fail**
+- [x] **Step 3: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_auth.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'spotifymix.spotify'`.
 
-- [ ] **Step 4: Implement `src/spotifymix/spotify/auth.py`** (and create an empty `src/spotifymix/spotify/__init__.py`)
+- [x] **Step 4: Implement `src/spotifymix/spotify/auth.py`** (and create an empty `src/spotifymix/spotify/__init__.py`)
 
 ```python
 """Spotify login with Authorization Code + PKCE. No client secret exists anywhere."""
@@ -2007,12 +2007,12 @@ def login_interactive(
     return tokens
 ```
 
-- [ ] **Step 5: Run tests and lint**
+- [x] **Step 5: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A
