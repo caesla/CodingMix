@@ -7,7 +7,7 @@ import httpx
 import pytest
 from fakes import FakeKeyring, free_port
 
-from spotifymix.spotify import auth
+from codingmix.spotify import auth
 
 
 def token_client(handler):

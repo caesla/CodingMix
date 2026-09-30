@@ -5,8 +5,8 @@ import urllib.request
 import pytest
 from fakes import free_port
 
-from spotifymix import paths
-from spotifymix.server import TOKEN_HEADER, ServiceDown, call_service, make_server
+from codingmix import paths
+from codingmix.server import TOKEN_HEADER, ServiceDown, call_service, make_server
 
 TOKEN = "secret-token"
 

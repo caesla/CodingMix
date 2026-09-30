@@ -6,9 +6,9 @@ import random
 from collections import deque
 from datetime import UTC, datetime
 
-from spotifymix.config import ModeConfig
-from spotifymix.models import Track
-from spotifymix.store import Store
+from codingmix.config import ModeConfig
+from codingmix.models import Track
+from codingmix.store import Store
 
 MAX_OFFSET = 1000
 # Intros, interludes and skits are too short to be background music.

@@ -1,4 +1,4 @@
-"""The `spotifymix` command."""
+"""The `codingmix` command."""
 
 from __future__ import annotations
 
@@ -10,8 +10,8 @@ import sys
 import time
 from pathlib import Path
 
-from spotifymix import __version__, autostart, paths
-from spotifymix.claude_settings import (
+from codingmix import __version__, autostart, paths
+from codingmix.claude_settings import (
     SettingsError,
     diff_text,
     hook_command,
@@ -21,16 +21,17 @@ from spotifymix.claude_settings import (
     settings_path,
     write_settings,
 )
-from spotifymix.config import Config, ConfigError, load_config, save_user_settings
-from spotifymix.server import ServiceDown, call_service
+from codingmix.config import Config, ConfigError, load_config, save_user_settings
+from codingmix.server import ServiceDown, call_service
 
 _DURATION = re.compile(r"^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$")
 WEAK_GENRE_THRESHOLD = 50
 
-SETUP_INTRO = """SpotifyMix setup
+SETUP_INTRO = """CodingMix setup
 
 1. Open https://developer.spotify.com/dashboard and create an app
-   (your account needs Spotify Premium). Any name and description work.
+   (your account needs Spotify Premium). Name it for example CodingMix:
+   Spotify does not allow the word "Spotify" in app names.
 2. Add this Redirect URI exactly as written:
      {redirect}
 3. When asked which APIs you plan to use, select "Web API". Save.
@@ -93,11 +94,11 @@ def _config() -> Config:
 def _client(cfg: Config):
     import httpx
 
-    from spotifymix.spotify.auth import TokenStore
-    from spotifymix.spotify.client import SpotifyClient
+    from codingmix.spotify.auth import TokenStore
+    from codingmix.spotify.client import SpotifyClient
 
     if not cfg.client_id:
-        raise ConfigError("no Spotify Client ID configured; run `spotifymix setup`")
+        raise ConfigError("no Spotify Client ID configured; run `codingmix setup`")
     return SpotifyClient(httpx.Client(), cfg.client_id, TokenStore(paths.token_fallback_file()))
 
 
@@ -112,7 +113,7 @@ def _service_command(body: dict) -> int:
     try:
         _service("POST", "/control", body)
     except ServiceDown:
-        print("The SpotifyMix service is not running. Start it with `spotifymix service run`.")
+        print("The CodingMix service is not running. Start it with `codingmix service run`.")
         return 1
     except ValueError as exc:
         print(f"The service refused: {exc}", file=sys.stderr)
@@ -125,8 +126,8 @@ def cmd_status(args: argparse.Namespace) -> int:
     try:
         status = _service("GET", "/status")
     except ServiceDown:
-        print("The SpotifyMix service is not running. "
-              "Start it with `spotifymix service run` or `spotifymix service install`.")
+        print("The CodingMix service is not running. "
+              "Start it with `codingmix service run` or `codingmix service install`.")
         return 1
     except ValueError as exc:
         print(f"The service refused: {exc}", file=sys.stderr)
@@ -184,9 +185,9 @@ def cmd_hooks(args: argparse.Namespace) -> int:
     try:
         current = load_settings(path)
         if args.action == "install":
-            exe = shutil.which("spotifymix-hook")
+            exe = shutil.which("codingmix-hook")
             if not exe:
-                print("spotifymix-hook was not found on PATH. Install SpotifyMix first.",
+                print("codingmix-hook was not found on PATH. Install CodingMix first.",
                       file=sys.stderr)
                 return 2
             new = plan_install(current, hook_command(Path(exe)))
@@ -211,7 +212,7 @@ def cmd_hooks(args: argparse.Namespace) -> int:
 
 def cmd_service(args: argparse.Namespace) -> int:
     if args.action == "run":
-        from spotifymix.service import run
+        from codingmix.service import run
 
         return run()
     try:
@@ -228,11 +229,11 @@ def cmd_service(args: argparse.Namespace) -> int:
 def cmd_login(args: argparse.Namespace) -> int:
     import httpx
 
-    from spotifymix.spotify.auth import AuthError, TokenStore, login_interactive
+    from codingmix.spotify.auth import AuthError, TokenStore, login_interactive
 
     cfg = _config()
     if not cfg.client_id:
-        print("Run `spotifymix setup` first.", file=sys.stderr)
+        print("Run `codingmix setup` first.", file=sys.stderr)
         return 2
     print("Opening the Spotify login page in your browser...")
     try:
@@ -246,7 +247,7 @@ def cmd_login(args: argparse.Namespace) -> int:
 
 
 def cmd_logout(args: argparse.Namespace) -> int:
-    from spotifymix.spotify.auth import TokenStore
+    from codingmix.spotify.auth import TokenStore
 
     TokenStore(paths.token_fallback_file()).clear()
     print("Spotify login removed from this computer.")
@@ -269,7 +270,7 @@ def _choose_device(cfg: Config) -> str:
 
 
 def cmd_setup(args: argparse.Namespace) -> int:
-    from spotifymix.spotify.auth import redirect_uri
+    from codingmix.spotify.auth import redirect_uri
 
     cfg_file = paths.config_file()
     print(SETUP_INTRO.format(redirect=redirect_uri(_config().redirect_port)))
@@ -283,12 +284,12 @@ def cmd_setup(args: argparse.Namespace) -> int:
     save_user_settings(cfg_file, device_name=_choose_device(_config()))
     paths.ensure_service_token()
     print(f"Settings saved in {cfg_file}")
-    if _confirm("Add the SpotifyMix hooks to Claude Code now?"):
+    if _confirm("Add the CodingMix hooks to Claude Code now?"):
         cmd_hooks(argparse.Namespace(action="install", yes=False))
-    if _confirm("Start SpotifyMix automatically when you log in?"):
+    if _confirm("Start CodingMix automatically when you log in?"):
         cmd_service(argparse.Namespace(action="install"))
     print("Setup complete. Play something in Spotify on this computer, "
-          "then run `spotifymix status`.")
+          "then run `codingmix status`.")
     return 0
 
 
@@ -297,14 +298,14 @@ def cmd_uninstall(args: argparse.Namespace) -> int:
     cmd_service(argparse.Namespace(action="uninstall"))
     print("Your settings and history are kept in:")
     print(f"  {paths.config_dir()}\n  {paths.data_dir()}")
-    print("Delete those folders and run `spotifymix logout` to remove everything.")
+    print("Delete those folders and run `codingmix logout` to remove everything.")
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="spotifymix", description="Spotify music that follows your Claude Code activity.")
-    parser.add_argument("--version", action="version", version=f"spotifymix {__version__}")
+        prog="codingmix", description="Spotify music that follows your Claude Code activity.")
+    parser.add_argument("--version", action="version", version=f"codingmix {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
     for name, func, text in (
         ("setup", cmd_setup, "guided first-time setup"),
@@ -337,8 +338,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def run(argv: list[str] | None = None) -> int:
-    from spotifymix.spotify.auth import AuthError
-    from spotifymix.spotify.client import SpotifyError
+    from codingmix.spotify.auth import AuthError
+    from codingmix.spotify.client import SpotifyError
 
     args = build_parser().parse_args(argv)
     try:

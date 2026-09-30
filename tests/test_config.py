@@ -2,7 +2,7 @@ import tomllib
 
 import pytest
 
-from spotifymix.config import ConfigError, dump_toml, load_config, save_user_settings
+from codingmix.config import ConfigError, dump_toml, load_config, save_user_settings
 
 
 def test_defaults_define_eleven_modes():

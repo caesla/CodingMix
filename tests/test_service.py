@@ -4,14 +4,14 @@ import threading
 import pytest
 from fakes import FakeSpotify, make_track, playing
 
-from spotifymix import service as service_module
-from spotifymix.classifier import Classifier
-from spotifymix.config import load_config
-from spotifymix.director import Director
-from spotifymix.finder import Finder
-from spotifymix.recorder import Recorder
-from spotifymix.service import Service
-from spotifymix.store import Store
+from codingmix import service as service_module
+from codingmix.classifier import Classifier
+from codingmix.config import load_config
+from codingmix.director import Director
+from codingmix.finder import Finder
+from codingmix.recorder import Recorder
+from codingmix.service import Service
+from codingmix.store import Store
 
 NOW = 2_000_000_000.0
 CUR = make_track(1, "cur")

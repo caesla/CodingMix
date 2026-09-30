@@ -1,5 +1,5 @@
-# SpotifyMix defaults. Override any value in the user config.toml
-# (run `spotifymix status` to see where it lives).
+# CodingMix defaults. Override any value in the user config.toml
+# (run `codingmix status` to see where it lives).
 
 [spotify]
 client_id = ""

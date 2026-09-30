@@ -14,7 +14,7 @@ TIMEOUT_SECONDS = 1.0
 
 
 def _forward(raw: bytes) -> None:
-    from spotifymix import paths
+    from codingmix import paths
 
     token_file = paths.service_token_file()
     if not token_file.exists():
@@ -23,7 +23,7 @@ def _forward(raw: bytes) -> None:
     port = paths.read_service_port(paths.config_file())
     request = urllib.request.Request(
         f"http://127.0.0.1:{port}/event", data=raw, method="POST",
-        headers={"Content-Type": "application/json", "X-SpotifyMix-Token": token},
+        headers={"Content-Type": "application/json", "X-CodingMix-Token": token},
     )
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
     opener.open(request, timeout=TIMEOUT_SECONDS).close()

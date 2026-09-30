@@ -62,7 +62,7 @@ class Config:
 
 
 def _defaults() -> dict[str, Any]:
-    text = resources.files("spotifymix").joinpath("defaults.toml").read_text(encoding="utf-8")
+    text = resources.files("codingmix").joinpath("defaults.toml").read_text(encoding="utf-8")
     return tomllib.loads(text)
 
 

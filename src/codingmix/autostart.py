@@ -11,11 +11,11 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 from xml.sax.saxutils import escape
 
-from spotifymix import paths
+from codingmix import paths
 
-TASK_NAME = "SpotifyMix"
-LAUNCHD_LABEL = "io.github.caesla.spotifymix"
-SYSTEMD_UNIT = "spotifymix.service"
+TASK_NAME = "CodingMix"
+LAUNCHD_LABEL = "io.github.caesla.codingmix"
+SYSTEMD_UNIT = "codingmix.service"
 RUN_KEY = r"HKCU\Software\Microsoft\Windows\CurrentVersion\Run"
 
 Runner = Callable[[Sequence[str]], subprocess.CompletedProcess]
@@ -30,10 +30,10 @@ def default_runner(args: Sequence[str]) -> subprocess.CompletedProcess:
 
 
 def service_executable() -> Path:
-    found = shutil.which("spotifymix-service")
+    found = shutil.which("codingmix-service")
     if not found:
         raise AutostartError(
-            "spotifymix-service was not found on PATH; install SpotifyMix with `uv tool install`"
+            "codingmix-service was not found on PATH; install CodingMix with `uv tool install`"
         )
     return Path(found)
 
@@ -42,7 +42,7 @@ def render_windows_task(exe: Path, user_id: str) -> str:
     user = escape(user_id)
     return f"""<?xml version="1.0" encoding="UTF-16"?>
 <Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
-  <RegistrationInfo><Description>SpotifyMix background service</Description></RegistrationInfo>
+  <RegistrationInfo><Description>CodingMix background service</Description></RegistrationInfo>
   <Triggers>
     <LogonTrigger><Enabled>true</Enabled><UserId>{user}</UserId></LogonTrigger>
   </Triggers>
@@ -82,7 +82,7 @@ def render_launchd_plist(exe: Path, log_dir: Path) -> str:
 
 def render_systemd_unit(exe: Path) -> str:
     return f"""[Unit]
-Description=SpotifyMix background service
+Description=CodingMix background service
 After=network-online.target
 
 [Service]
@@ -117,17 +117,17 @@ def install(
 ) -> str:
     home = home or Path.home()
     if platform.startswith("win"):
-        xml_path = paths.data_dir() / "spotifymix-task.xml"
+        xml_path = paths.data_dir() / "codingmix-task.xml"
         xml_path.write_text(render_windows_task(exe, user_id or _windows_user()), encoding="utf-16")
         created = runner(["schtasks", "/Create", "/TN", TASK_NAME, "/XML", str(xml_path), "/F"])
         if created.returncode == 0:
             runner(["schtasks", "/Run", "/TN", TASK_NAME])
-            return "Windows Task Scheduler task 'SpotifyMix' (starts at logon, restarts on failure)"
+            return "Windows Task Scheduler task 'CodingMix' (starts at logon, restarts on failure)"
         added = runner(["reg", "add", RUN_KEY, "/v", TASK_NAME, "/t", "REG_SZ",
                         "/d", f'"{exe}"', "/f"])
         _check(added, "registering the Run key")
         runner(["cmd", "/c", "start", "", str(exe)])
-        return "Windows Run key 'SpotifyMix' (starts at logon; no automatic restart)"
+        return "Windows Run key 'CodingMix' (starts at logon; no automatic restart)"
     if platform == "darwin":
         agents = home / "Library" / "LaunchAgents"
         agents.mkdir(parents=True, exist_ok=True)
@@ -160,7 +160,7 @@ def uninstall(
         runner(["schtasks", "/End", "/TN", TASK_NAME])
         runner(["schtasks", "/Delete", "/TN", TASK_NAME, "/F"])
         runner(["reg", "delete", RUN_KEY, "/v", TASK_NAME, "/f"])
-        return "Removed the SpotifyMix scheduled task and Run key (if present)"
+        return "Removed the CodingMix scheduled task and Run key (if present)"
     if platform == "darwin":
         plist = home / "Library" / "LaunchAgents" / f"{LAUNCHD_LABEL}.plist"
         domain = f"gui/{uid if uid is not None else os.getuid()}"

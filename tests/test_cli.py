@@ -4,7 +4,7 @@ import json
 import pytest
 from fakes import FakeSpotify, free_port, make_track
 
-from spotifymix import cli, paths
+from codingmix import cli, paths
 
 
 @pytest.fixture
@@ -64,16 +64,16 @@ def test_mode_pause_resume_send_control(port, monkeypatch):
 
 
 def test_hooks_install_and_uninstall(monkeypatch, tmp_path):
-    monkeypatch.setattr(cli.shutil, "which", lambda name: "/opt/bin/spotifymix-hook")
+    monkeypatch.setattr(cli.shutil, "which", lambda name: "/opt/bin/codingmix-hook")
     settings = tmp_path / "claude" / "settings.json"
     assert cli.run(["hooks", "install", "--yes"]) == 0
-    assert "spotifymix-hook" in settings.read_text(encoding="utf-8")
+    assert "codingmix-hook" in settings.read_text(encoding="utf-8")
     assert cli.run(["hooks", "uninstall", "--yes"]) == 0
     assert json.loads(settings.read_text(encoding="utf-8")) == {}
 
 
 def test_hooks_install_refuses_invalid_settings(monkeypatch, tmp_path):
-    monkeypatch.setattr(cli.shutil, "which", lambda name: "/opt/bin/spotifymix-hook")
+    monkeypatch.setattr(cli.shutil, "which", lambda name: "/opt/bin/codingmix-hook")
     settings = tmp_path / "claude" / "settings.json"
     settings.parent.mkdir(parents=True)
     settings.write_text("{ broken", encoding="utf-8")
@@ -82,7 +82,7 @@ def test_hooks_install_refuses_invalid_settings(monkeypatch, tmp_path):
 
 
 def test_hooks_install_asks_before_writing(monkeypatch, tmp_path):
-    monkeypatch.setattr(cli.shutil, "which", lambda name: "/opt/bin/spotifymix-hook")
+    monkeypatch.setattr(cli.shutil, "which", lambda name: "/opt/bin/codingmix-hook")
     monkeypatch.setattr("builtins.input", lambda prompt="": "n")
     assert cli.run(["hooks", "install"]) == 1
     assert not (tmp_path / "claude" / "settings.json").exists()
@@ -105,7 +105,7 @@ def test_check_genres_reports_weak_labels(monkeypatch, capsys):
 
 
 def test_spotify_errors_become_readable_messages(monkeypatch, capsys):
-    from spotifymix.spotify.client import SpotifyError
+    from codingmix.spotify.client import SpotifyError
 
     fake = FakeSpotify()
     fake.error = SpotifyError("Spotify returned HTTP 403 for /search")

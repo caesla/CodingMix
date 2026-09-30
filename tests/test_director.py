@@ -1,11 +1,11 @@
 import pytest
 from fakes import FakeFinder, FakeModes, FakeSpotify, make_track, playing
 
-from spotifymix.director import Director
-from spotifymix.models import Playback
-from spotifymix.spotify.auth import LoginRequired
-from spotifymix.spotify.client import RateLimited, SpotifyUnavailable
-from spotifymix.store import Store
+from codingmix.director import Director
+from codingmix.models import Playback
+from codingmix.spotify.auth import LoginRequired
+from codingmix.spotify.client import RateLimited, SpotifyUnavailable
+from codingmix.store import Store
 
 NOW = 1_000_000.0
 CUR = make_track(99, "cur")  # 200 s long
@@ -137,7 +137,7 @@ def test_unavailable_backs_off():
 
 def test_login_required_slows_polling():
     d, sp, *_ = make()
-    sp.error = LoginRequired("run spotifymix login")
+    sp.error = LoginRequired("run codingmix login")
     assert d.tick(NOW) == 60
     assert "login" in d.last_error
 

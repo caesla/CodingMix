@@ -9,11 +9,11 @@ from pathlib import Path
 
 from platformdirs import PlatformDirs
 
-_DIRS = PlatformDirs(appname="SpotifyMix", appauthor=False, roaming=True)
+_DIRS = PlatformDirs(appname="CodingMix", appauthor=False, roaming=True)
 
 
 def _home_override() -> Path | None:
-    value = os.environ.get("SPOTIFYMIX_HOME")
+    value = os.environ.get("CODINGMIX_HOME")
     return Path(value) if value else None
 
 
@@ -42,7 +42,7 @@ def config_file() -> Path:
 
 
 def db_file() -> Path:
-    return data_dir() / "spotifymix.db"
+    return data_dir() / "codingmix.db"
 
 
 def token_fallback_file() -> Path:

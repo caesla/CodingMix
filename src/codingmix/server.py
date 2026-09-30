@@ -12,7 +12,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
 
 MAX_BODY = 1_000_000
-TOKEN_HEADER = "X-SpotifyMix-Token"
+TOKEN_HEADER = "X-CodingMix-Token"
 
 log = logging.getLogger(__name__)
 

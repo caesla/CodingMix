@@ -7,7 +7,7 @@ import threading
 from collections.abc import Iterable
 from pathlib import Path
 
-from spotifymix.models import Play, SavedTrack, Track
+from codingmix.models import Play, SavedTrack, Track
 
 DAY = 86400
 

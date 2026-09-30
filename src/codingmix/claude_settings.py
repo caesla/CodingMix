@@ -1,4 +1,4 @@
-"""Adds and removes the SpotifyMix hooks in Claude Code's settings.json."""
+"""Adds and removes the CodingMix hooks in Claude Code's settings.json."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from typing import Any
 
 HOOK_EVENTS = ("PreToolUse", "PostToolUseFailure", "UserPromptSubmit", "SubagentStart")
 TOOL_EVENTS = {"PreToolUse", "PostToolUseFailure"}
-MARKER = "spotifymix-hook"
+MARKER = "codingmix-hook"
 
 
 class SettingsError(Exception):
@@ -103,10 +103,10 @@ def write_settings(path: Path, data: dict[str, Any]) -> Path | None:
     backup = None
     if path.exists():
         stamp = time.strftime("%Y%m%d-%H%M%S")
-        backup = path.with_name(f"{path.name}.spotifymix-backup-{stamp}")
+        backup = path.with_name(f"{path.name}.codingmix-backup-{stamp}")
         backup.write_bytes(path.read_bytes())
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + ".spotifymix-tmp")
+    tmp = path.with_name(path.name + ".codingmix-tmp")
     tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     os.replace(tmp, path)
     return backup

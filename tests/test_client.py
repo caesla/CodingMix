@@ -2,8 +2,8 @@ import httpx
 import pytest
 from fakes import FakeApi, make_client, track_json
 
-from spotifymix.spotify.auth import LoginRequired
-from spotifymix.spotify.client import RateLimited, SpotifyUnavailable
+from codingmix.spotify.auth import LoginRequired
+from codingmix.spotify.client import RateLimited, SpotifyUnavailable
 
 
 def test_access_token_is_refreshed_once_and_reused():

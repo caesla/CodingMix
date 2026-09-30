@@ -1,4 +1,4 @@
-"""The SpotifyMix background service: wiring, main loop and entry point."""
+"""The CodingMix background service: wiring, main loop and entry point."""
 
 from __future__ import annotations
 
@@ -10,16 +10,16 @@ import time
 from collections.abc import Callable
 from logging.handlers import RotatingFileHandler
 
-from spotifymix import paths
-from spotifymix.classifier import Classifier
-from spotifymix.config import Config, load_config
-from spotifymix.director import Director
-from spotifymix.finder import Finder
-from spotifymix.recorder import Recorder
-from spotifymix.server import make_server
-from spotifymix.store import Store
+from codingmix import paths
+from codingmix.classifier import Classifier
+from codingmix.config import Config, load_config
+from codingmix.director import Director
+from codingmix.finder import Finder
+from codingmix.recorder import Recorder
+from codingmix.server import make_server
+from codingmix.store import Store
 
-log = logging.getLogger("spotifymix")
+log = logging.getLogger("codingmix")
 
 LOOP_MAX_SLEEP = 5.0
 PRUNE_EVERY = 3600.0
@@ -112,7 +112,7 @@ class Service:
 
 def setup_logging() -> None:
     handler = RotatingFileHandler(
-        paths.log_dir() / "spotifymix.log", maxBytes=1_000_000, backupCount=3, encoding="utf-8"
+        paths.log_dir() / "codingmix.log", maxBytes=1_000_000, backupCount=3, encoding="utf-8"
     )
     handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
     log.setLevel(logging.INFO)
@@ -122,8 +122,8 @@ def setup_logging() -> None:
 def build(cfg: Config) -> Service:
     import httpx
 
-    from spotifymix.spotify.auth import TokenStore
-    from spotifymix.spotify.client import SpotifyClient
+    from codingmix.spotify.auth import TokenStore
+    from codingmix.spotify.client import SpotifyClient
 
     store = Store(paths.db_file())
     tokens = TokenStore(paths.token_fallback_file())
@@ -142,7 +142,7 @@ def run() -> int:
     cfg = load_config(paths.config_file())
     if not cfg.client_id:
         # Exit 0 so launchd/systemd do not restart-loop an unconfigured install.
-        log.error("SpotifyMix is not configured; run `spotifymix setup`")
+        log.error("CodingMix is not configured; run `codingmix setup`")
         return 0
     service = build(cfg)
     try:
@@ -151,14 +151,14 @@ def run() -> int:
             service.handle_event, service.status, service.control,
         )
     except OSError:
-        log.info("port %s is busy: SpotifyMix is probably already running", cfg.service_port)
+        log.info("port %s is busy: CodingMix is probably already running", cfg.service_port)
         return 0
     threading.Thread(target=server.serve_forever, daemon=True).start()
     stop = threading.Event()
     for name in ("SIGTERM", "SIGINT"):
         if hasattr(signal, name):
             signal.signal(getattr(signal, name), lambda *_: stop.set())
-    log.info("SpotifyMix service listening on 127.0.0.1:%s", cfg.service_port)
+    log.info("CodingMix service listening on 127.0.0.1:%s", cfg.service_port)
     try:
         service.run_forever(stop)
     finally:

@@ -1,4 +1,4 @@
-from spotifymix import paths
+from codingmix import paths
 
 
 def test_dirs_live_under_override(isolated_home):
@@ -7,7 +7,7 @@ def test_dirs_live_under_override(isolated_home):
     assert paths.log_dir() == isolated_home / "logs"
     assert paths.config_dir().is_dir()
     assert paths.config_file() == isolated_home / "config" / "config.toml"
-    assert paths.db_file() == isolated_home / "data" / "spotifymix.db"
+    assert paths.db_file() == isolated_home / "data" / "codingmix.db"
 
 
 def test_claude_config_dir_honours_env(tmp_path):

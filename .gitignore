@@ -9,7 +9,7 @@ dist/
 build/
 *.egg-info/
 
-# Local data and secrets (SpotifyMix stores these in the user data dir, never here)
+# Local data and secrets (CodingMix stores these in the user data dir, never here)
 *.db
 *.sqlite
 *.sqlite3

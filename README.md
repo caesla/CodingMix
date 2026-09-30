@@ -1,9 +1,12 @@
-# SpotifyMix
+# CodingMix
 
-SpotifyMix watches what you are doing in [Claude Code](https://claude.com/claude-code)
+CodingMix watches what you are doing in [Claude Code](https://claude.com/claude-code)
 (coding, debugging, planning, reviewing, ...) and queues fresh Spotify tracks that fit the
 activity. One rule is never broken: **no track you listened to, saved, or were offered in the
 last 7 days**.
+
+**Spotify only.** CodingMix works with the Spotify desktop app and a Spotify Premium account.
+It does not support Apple Music, Amazon Music, SoundCloud, YouTube Music or other services.
 
 It runs locally as a small background service. There is no server, no telemetry and no secret
 to leak: login uses Spotify's PKCE flow, which needs no client secret.
@@ -19,8 +22,8 @@ to leak: login uses Spotify's PKCE flow, which needs no client secret.
 ## Install
 
 ```bash
-uv tool install git+https://github.com/caesla/spotifymix
-spotifymix setup
+uv tool install git+https://github.com/caesla/CodingMix
+codingmix setup
 ```
 
 `setup` walks you through creating the Spotify app, logs you in, asks which Spotify device to
@@ -29,12 +32,12 @@ follow, shows the exact change it wants to make to your Claude Code settings bef
 
 ## How it works
 
-1. Claude Code runs `spotifymix-hook` asynchronously on tool use, failures, prompts and
+1. Claude Code runs `codingmix-hook` asynchronously on tool use, failures, prompts and
    subagent starts. The hook forwards the event to the local service and exits at once; if the
    service is down, Claude Code does not notice.
 2. The service turns each event into a vote for a mode. The mode with most votes in the last
    3 minutes wins; a new mode must lead for 3 minutes before the music changes.
-3. About 20 seconds before the current track ends, SpotifyMix queues **one** track of the
+3. About 20 seconds before the current track ends, CodingMix queues **one** track of the
    current mode's genre, found with Spotify search and filtered against your last 7 days.
 4. It only acts while music is playing on this computer. Paused, or playing on your phone:
    it does nothing. Pick your own playlist and it steps aside until the next mode change.
@@ -53,22 +56,22 @@ follow, shows the exact change it wants to make to your Claude Code settings bef
 | release | funk, disco | commit, push, pull requests, deploy |
 | orchestrating | deep house, tech house | several subagents |
 
-Change genres or rules in your `config.toml` (`spotifymix modes` prints its location), then
-run `spotifymix check-genres` to see how many Spotify results each genre label returns.
+Change genres or rules in your `config.toml` (`codingmix modes` prints its location), then
+run `codingmix check-genres` to see how many Spotify results each genre label returns.
 
 ## Commands
 
 ```text
-spotifymix status               what the service is doing
-spotifymix mode debugging --for 30m
-spotifymix pause 1h             stop changing music for a while
-spotifymix resume               end a pause or a manual mode
-spotifymix modes                list modes and genres
-spotifymix check-genres         count Spotify results per genre label
-spotifymix hooks install|uninstall
-spotifymix service run|install|uninstall
-spotifymix login | logout
-spotifymix uninstall            remove hooks and autostart
+codingmix status               what the service is doing
+codingmix mode debugging --for 30m
+codingmix pause 1h             stop changing music for a while
+codingmix resume               end a pause or a manual mode
+codingmix modes                list modes and genres
+codingmix check-genres         count Spotify results per genre label
+codingmix hooks install|uninstall
+codingmix service run|install|uninstall
+codingmix login | logout
+codingmix uninstall            remove hooks and autostart
 ```
 
 ## Privacy
@@ -81,7 +84,7 @@ spotifymix uninstall            remove hooks and autostart
 
 ## Limitations
 
-- The 7-day rule covers what SpotifyMix could see: Spotify only returns your last 50 plays, so
+- The 7-day rule covers what CodingMix could see: Spotify only returns your last 50 plays, so
   plays on other devices while this computer was off for many hours can be missed.
 - Spotify no longer offers recommendations to new apps, so discovery is based on genre search.
 - Spotify's genre labels vary; use `check-genres` and adjust labels in `config.toml`.
@@ -94,8 +97,9 @@ uv run pytest
 uv run ruff check
 ```
 
-Design document (Italian): [docs/superpowers/specs/2026-09-30-spotifymix-design.md](docs/superpowers/specs/2026-09-30-spotifymix-design.md)
+Design document (Italian): [docs/superpowers/specs/2026-09-30-codingmix-design.md](docs/superpowers/specs/2026-09-30-codingmix-design.md)
 
 ## License
 
-MIT
+MIT. CodingMix is an independent project for Spotify, not affiliated with or endorsed by
+Spotify.

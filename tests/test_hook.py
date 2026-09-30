@@ -6,8 +6,8 @@ import time
 
 from fakes import free_port
 
-from spotifymix import hook, paths
-from spotifymix.server import make_server
+from codingmix import hook, paths
+from codingmix.server import make_server
 
 EVENT = b'{"hook_event_name": "PreToolUse", "tool_name": "Edit"}'
 

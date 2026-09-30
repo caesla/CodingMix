@@ -7,9 +7,9 @@ import socket
 
 import httpx
 
-from spotifymix import paths
-from spotifymix.models import Playback, Track
-from spotifymix.spotify.auth import TokenStore
+from codingmix import paths
+from codingmix.models import Playback, Track
+from codingmix.spotify.auth import TokenStore
 
 
 class FakeKeyring:
@@ -51,7 +51,7 @@ def track_json(track_id="t1", name=None, artist=None, **extra):
 
 
 class FakeApi:
-    """httpx MockTransport handler emulating the Spotify endpoints SpotifyMix uses."""
+    """httpx MockTransport handler emulating the Spotify endpoints CodingMix uses."""
 
     def __init__(self) -> None:
         self.routes: dict[tuple[str, str], list] = {}
@@ -87,7 +87,7 @@ class FakeApi:
 
 
 def make_client(api: FakeApi, refresh: str | None = "R1", clock=lambda: 1000.0):
-    from spotifymix.spotify.client import SpotifyClient
+    from codingmix.spotify.client import SpotifyClient
 
     tokens = TokenStore(paths.token_fallback_file(), backend=FakeKeyring())
     if refresh:

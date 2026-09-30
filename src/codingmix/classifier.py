@@ -10,7 +10,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from spotifymix.config import REGEX_KEYS, Rule
+from codingmix.config import REGEX_KEYS, Rule
 
 # Claude Code fires UserPromptSubmit also for text it injects on its own
 # (background task results, subagent reports). They are not the user's words.

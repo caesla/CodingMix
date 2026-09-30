@@ -1,7 +1,7 @@
 import pytest
 
-from spotifymix.classifier import Classifier
-from spotifymix.config import load_config
+from codingmix.classifier import Classifier
+from codingmix.config import load_config
 
 
 @pytest.fixture

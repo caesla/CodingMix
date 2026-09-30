@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from spotifymix.claude_settings import (
+from codingmix.claude_settings import (
     HOOK_EVENTS,
     SettingsError,
     diff_text,
@@ -15,7 +15,7 @@ from spotifymix.claude_settings import (
     write_settings,
 )
 
-CMD = '"/opt/bin/spotifymix-hook"'
+CMD = '"/opt/bin/codingmix-hook"'
 FOREIGN = {
     "model": "opus",
     "hooks": {
@@ -80,7 +80,7 @@ def test_write_creates_backup_and_valid_json(tmp_path):
     path.write_text(json.dumps(FOREIGN), encoding="utf-8")
     backup = write_settings(path, plan_install(FOREIGN, CMD))
     assert backup is not None and json.loads(backup.read_text(encoding="utf-8")) == FOREIGN
-    assert "spotifymix-hook" in path.read_text(encoding="utf-8")
+    assert "codingmix-hook" in path.read_text(encoding="utf-8")
     assert json.loads(path.read_text(encoding="utf-8"))["model"] == "opus"
 
 
@@ -91,8 +91,8 @@ def test_write_without_existing_file_has_no_backup(tmp_path):
 
 
 def test_hook_command_quotes_paths_with_spaces():
-    exe = Path("C:/Program Files/uv/spotifymix-hook.exe")
-    assert hook_command(exe) == '"C:/Program Files/uv/spotifymix-hook.exe"'
+    exe = Path("C:/Program Files/uv/codingmix-hook.exe")
+    assert hook_command(exe) == '"C:/Program Files/uv/codingmix-hook.exe"'
 
 
 def test_settings_path_and_diff(tmp_path):

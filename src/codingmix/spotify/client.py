@@ -9,8 +9,8 @@ from typing import Any
 
 import httpx
 
-from spotifymix.models import Device, Play, Playback, SavedTrack, Track, parse_iso
-from spotifymix.spotify.auth import AuthError, LoginRequired, TokenStore, refresh_access
+from codingmix.models import Device, Play, Playback, SavedTrack, Track, parse_iso
+from codingmix.spotify.auth import AuthError, LoginRequired, TokenStore, refresh_access
 
 API_BASE = "https://api.spotify.com/v1"
 
@@ -59,7 +59,7 @@ class SpotifyClient:
                 return self._access
             refresh = self._tokens.load()
             if not refresh:
-                raise LoginRequired("no Spotify login stored; run `spotifymix login`")
+                raise LoginRequired("no Spotify login stored; run `codingmix login`")
             try:
                 tokens = refresh_access(self._http, self._client_id, refresh, now)
             except LoginRequired:
@@ -94,7 +94,7 @@ class SpotifyClient:
             if method != "GET" or response.status_code in (202, 204) or not response.content:
                 return None
             return response.json()
-        raise LoginRequired("Spotify rejected a fresh access token; run `spotifymix login`")
+        raise LoginRequired("Spotify rejected a fresh access token; run `codingmix login`")
 
     def get_playback(self) -> Playback | None:
         data = self._request("GET", "/me/player", {"additional_types": "episode"})

@@ -5,9 +5,9 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 
-from spotifymix.spotify.auth import AuthError
-from spotifymix.spotify.client import SpotifyError
-from spotifymix.store import DAY, Store
+from codingmix.spotify.auth import AuthError
+from codingmix.spotify.client import SpotifyError
+from codingmix.store import DAY, Store
 
 log = logging.getLogger(__name__)
 

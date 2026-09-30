@@ -1,34 +1,34 @@
-# SpotifyMix: documento di progetto
+# CodingMix: documento di progetto
 
 Data: 2026-09-30. Stato: da rileggere e approvare.
 
 ## 1. Obiettivo
 
-Chi lavora con Claude Code ascolta musica per gran parte del tempo, ma il feed di Spotify ripropone sempre gli stessi brani. SpotifyMix capisce che attività si sta svolgendo in Claude Code (sviluppo, debug, pianificazione, ...) e fa suonare su Spotify musica nuova del genere adatto a quell'attività.
+Chi lavora con Claude Code ascolta musica per gran parte del tempo, ma il feed di Spotify ripropone sempre gli stessi brani. CodingMix capisce che attività si sta svolgendo in Claude Code (sviluppo, debug, pianificazione, ...) e fa suonare su Spotify musica nuova del genere adatto a quell'attività.
 
 **Regola unica e non negoziabile:** non riprodurre mai un brano ascoltato o salvato negli ultimi 7 giorni.
 
 Successo significa:
 - durante una giornata di lavoro la musica cambia genere quando cambia davvero l'attività, senza intervento manuale;
 - nessun brano sentito o salvato negli ultimi 7 giorni viene proposto;
-- Claude Code non viene mai rallentato né bloccato, anche se SpotifyMix è spento o guasto;
+- Claude Code non viene mai rallentato né bloccato, anche se CodingMix è spento o guasto;
 - il repository è pubblico e installabile da chiunque, senza dati personali dell'autore.
 
 ### Cosa ha chiesto l'autore e cosa è stato dedotto
 
-Richiesto esplicitamente: rilevamento da Claude Code con comando manuale di riserva; le modalità e i generi della sezione 5; nessun cambio mentre Claude aspetta l'utente; a fine sessione si continua con l'ultimo genere; servizio sempre acceso (opzione B); nessun intervento se la musica è in pausa o suona su un altro dispositivo; repository pubblico `caesla/spotifymix`; Windows, Mac e Linux; autore delle modifiche "caesla" con indirizzo anonimo GitHub.
+Richiesto esplicitamente: rilevamento da Claude Code con comando manuale di riserva; le modalità e i generi della sezione 5; nessun cambio mentre Claude aspetta l'utente; a fine sessione si continua con l'ultimo genere; servizio sempre acceso (opzione B); nessun intervento se la musica è in pausa o suona su un altro dispositivo; repository pubblico `caesla/codingmix`; Windows, Mac e Linux; autore delle modifiche "caesla" con indirizzo anonimo GitHub.
 
 Dedotto (da confermare in revisione): comportamento quando l'utente sceglie da sé una playlist (sezione 7.4); soglia di 3 minuti per il cambio di modalità; frequenze di controllo.
 
 ## 2. Vincoli esterni verificati (30/09/2026)
 
-Fonti: documentazione ufficiale per sviluppatori Spotify e documentazione ufficiale Claude Code. Il post di partenza citava "Song DNA": è una funzione dell'app Spotify (dati WhoSampled, marzo 2026), non esiste un'interfaccia pubblica per programmi. SpotifyMix usa la normale Web API di Spotify.
+Fonti: documentazione ufficiale per sviluppatori Spotify e documentazione ufficiale Claude Code. Il post di partenza citava "Song DNA": è una funzione dell'app Spotify (dati WhoSampled, marzo 2026), non esiste un'interfaccia pubblica per programmi. CodingMix usa la normale Web API di Spotify.
 
 **Spotify Web API**
 - Le app nuove sono in "Development mode": massimo 5 utenti per app, il proprietario deve avere Premium. L'accesso esteso è riservato ad aziende con 250.000 utenti mensili. Conseguenza: **ogni utente crea la propria app Spotify**.
 - Non disponibili per le app nuove: brani consigliati, artisti simili, caratteristiche audio, playlist editoriali. La scoperta di musica nuova va costruita con la ricerca.
 - Ricerca: filtro `genre:` supportato per brani e artisti; massimo 10 risultati per richiesta (da febbraio 2026); spostamento massimo nei risultati 1000.
-- Ascolti recenti: solo gli ultimi 50 brani. Uno storico di 7 giorni va accumulato da SpotifyMix.
+- Ascolti recenti: solo gli ultimi 50 brani. Uno storico di 7 giorni va accumulato da CodingMix.
 - Brani salvati: disponibili con data di salvataggio (`added_at`).
 - Controllo della riproduzione (avvio, coda): richiede Premium.
 - L'etichetta "genere" degli artisti è segnalata come poco affidabile dal 2025 (solo segnalazioni della comunità): non la usiamo come unico criterio.
@@ -43,9 +43,9 @@ Fonti: documentazione ufficiale per sviluppatori Spotify e documentazione uffici
 
 ```
 Claude Code (qualsiasi progetto)
-   │ hook async: `spotifymix hook` legge il segnale e lo inoltra (timeout 1 s, esce sempre con 0)
+   │ hook async: `codingmix hook` legge il segnale e lo inoltra (timeout 1 s, esce sempre con 0)
    ▼
-Servizio SpotifyMix (processo sempre acceso, solo 127.0.0.1)
+Servizio CodingMix (processo sempre acceso, solo 127.0.0.1)
    ├── Classificatore: segnali → modalità stabile
    ├── Regista: decide quando e cosa accodare
    ├── Cercatore: trova brani nuovi per genere
@@ -60,7 +60,7 @@ Archivio SQLite (cartella utente)          Spotify Web API
 | Unità | Cosa fa | Dipende da |
 |---|---|---|
 | `hook` (comando) | legge il segnale da stdin, lo invia al servizio con il token locale, esce 0 in ogni caso | solo libreria standard |
-| `server` | riceve i segnali su `127.0.0.1`, porta configurabile; rifiuta richieste senza intestazione `X-SpotifyMix-Token` | classificatore |
+| `server` | riceve i segnali su `127.0.0.1`, porta configurabile; rifiuta richieste senza intestazione `X-CodingMix-Token` | classificatore |
 | `classifier` | trasforma un segnale in un "voto" per una modalità secondo le regole; tiene la finestra degli ultimi 3 minuti; espone la modalità stabile | file regole |
 | `director` | osserva il brano in corso e accoda il prossimo brano della modalità stabile poco prima della fine | player, finder, store |
 | `finder` | produce brani candidati per un genere, già filtrati dalla regola dei 7 giorni | client Spotify, store |
@@ -73,7 +73,7 @@ Ogni unità si prova da sola con dati finti. Il classificatore non sa nulla di S
 
 ## 4. Scelte tecniche
 
-- Python 3.12, gestione con uv, installazione come strumento: `uv tool install git+https://github.com/caesla/spotifymix`.
+- Python 3.12, gestione con uv, installazione come strumento: `uv tool install git+https://github.com/caesla/codingmix`.
 - Dipendenze previste: `httpx` (HTTP), `keyring` (cassaforte di sistema), `platformdirs` (cartelle utente). Server HTTP locale leggero: la scelta precisa è rimandata al piano, preferendo la libreria standard.
 - Login Spotify con **Authorization Code + PKCE**: nessuna chiave segreta esiste.
 - Permessi Spotify richiesti: `user-read-recently-played`, `user-library-read`, `user-read-playback-state`, `user-read-currently-playing`, `user-modify-playback-state`.
@@ -106,14 +106,14 @@ Le etichette dei generi vanno verificate contro la ricerca reale di Spotify (sez
 1. Ogni segnale produce al massimo un voto, secondo le regole in ordine di priorità (vince la prima che si applica): manuale, debug, pianificazione, brainstorming, rilascio, test, revisione, orchestrazione, interfacce, scrittura, sviluppo, esplorazione.
 2. Le parole del messaggio dell'utente (es. "errore", "non funziona") aggiungono un voto più leggero, mai decisivo da solo.
 3. La **modalità stabile** è quella con più voti negli ultimi 3 minuti, sommando tutte le sessioni di Claude Code aperte. Cambia solo se la nuova vince per almeno 3 minuti consecutivi.
-4. Un comando manuale (`spotifymix mode debugging`) ha precedenza assoluta fino a scadenza (predefinita 1 ora) o fino a `spotifymix resume`.
+4. Un comando manuale (`codingmix mode debugging`) ha precedenza assoluta fino a scadenza (predefinita 1 ora) o fino a `codingmix resume`.
 5. Le regole stanno in un file dati leggibile, non sparse nel codice.
 
 **Riservatezza dei segnali:** i segnali contengono testo dei messaggi e percorsi di file. Il servizio li usa solo in memoria; su disco salva unicamente modalità, orario e nome dell'evento. Mai il testo dei messaggi, mai i percorsi.
 
 ## 7. Riproduzione
 
-### 7.1 Quando SpotifyMix agisce
+### 7.1 Quando CodingMix agisce
 Solo se la musica sta suonando su un dispositivo di tipo computer il cui nome corrisponde a questo PC (configurabile). In pausa, o su telefono, auto, altoparlanti: non fa nulla.
 
 ### 7.2 Come accoda
@@ -123,11 +123,11 @@ Il regista controlla il brano in corso (ogni 5 secondi solo verso la fine del br
 Il servizio non dipende dalle sessioni: finché la musica suona continua ad accodare brani dell'ultima modalità stabile. L'attesa dell'utente (modalità 12) non produce voti.
 
 ### 7.4 Se l'utente sceglie da sé (dedotto, da confermare)
-Se l'utente fa partire da Spotify una propria playlist, un album o un brano, SpotifyMix se ne accorge (il brano in corso non è uno di quelli accodati da lui) e si fa da parte fino al successivo cambio di modalità stabile o a `spotifymix resume`.
+Se l'utente fa partire da Spotify una propria playlist, un album o un brano, CodingMix se ne accorge (il brano in corso non è uno di quelli accodati da lui) e si fa da parte fino al successivo cambio di modalità stabile o a `codingmix resume`.
 
 ### 7.5 Scelta dei brani
 - Ricerca `genre:"<genere>"` su brani, con spostamento casuale nei risultati e intervalli di anni variabili, per evitare di pescare sempre i brani più famosi.
-- Scarto: brani ascoltati negli ultimi 7 giorni, brani salvati negli ultimi 7 giorni, brani già proposti da SpotifyMix negli ultimi 7 giorni.
+- Scarto: brani ascoltati negli ultimi 7 giorni, brani salvati negli ultimi 7 giorni, brani già proposti da CodingMix negli ultimi 7 giorni.
 - Scorta interna di circa 10 candidati per modalità, ricaricata quando scende sotto 3.
 - Il confronto avviene per ID Spotify del brano; in più per coppia "titolo normalizzato + artista principale", per non riproporre lo stesso brano in un'altra edizione.
 
@@ -142,7 +142,7 @@ Coperti: tutto ciò che è stato ascoltato mentre il servizio era acceso (contro
 | Errore nell'aggancio | intercettato ovunque, uscita sempre 0 |
 | Spotify risponde 429 (limite) | attende il tempo indicato da Spotify, riprova; la musica in corso non si tocca |
 | Spotify non raggiungibile | riprova con attese crescenti; registra nel log |
-| Token scaduto | rinnovo automatico; se fallisce, stato "login richiesto" in `spotifymix status` e nel log |
+| Token scaduto | rinnovo automatico; se fallisce, stato "login richiesto" in `codingmix status` e nel log |
 | Genere senza risultati | genere di riserva, voce nel log |
 | Nessun candidato dopo i filtri | allarga intervallo di anni e spostamenti; se ancora nulla, non accoda e registra |
 | Arresto del servizio | riavvio dal gestore di sistema |
@@ -160,16 +160,16 @@ Coperti: tutto ciò che è stato ascoltato mentre il servizio era acceso (contro
 
 ## 10. Installazione per un nuovo utente
 
-1. `uv tool install git+https://github.com/caesla/spotifymix`
-2. `spotifymix setup`, che guida a: creare l'app su developer.spotify.com con il redirect locale indicato; incollare il Client ID; fare login nel browser; scegliere il nome del dispositivo; aggiungere l'aggancio alle impostazioni utente di Claude Code (mostra la modifica e chiede conferma; salva una copia di riserva); installare l'avvio automatico.
-3. `spotifymix status` per vedere modalità, dispositivo, ultimo brano accodato ed eventuali errori.
-4. `spotifymix uninstall` rimuove aggancio e avvio automatico.
+1. `uv tool install git+https://github.com/caesla/codingmix`
+2. `codingmix setup`, che guida a: creare l'app su developer.spotify.com con il redirect locale indicato; incollare il Client ID; fare login nel browser; scegliere il nome del dispositivo; aggiungere l'aggancio alle impostazioni utente di Claude Code (mostra la modifica e chiede conferma; salva una copia di riserva); installare l'avvio automatico.
+3. `codingmix status` per vedere modalità, dispositivo, ultimo brano accodato ed eventuali errori.
+4. `codingmix uninstall` rimuove aggancio e avvio automatico.
 
 ## 11. Verifiche da fare prima o durante l'implementazione
 
 Sono premesse non ancora provate sul sistema reale:
 1. **Segnali reali**: registrare un giorno di segnali Claude Code su questo PC e confermare i campi usati dal classificatore (in particolare `PostToolUseFailure`, `SubagentStart`, `Notification`, `SessionEnd`, nome della skill in `tool_input`).
-2. **Shell dell'aggancio su Windows**: confermare che `spotifymix hook` venga lanciato correttamente dalla configurazione hook su Windows, Mac e Linux.
+2. **Shell dell'aggancio su Windows**: confermare che `codingmix hook` venga lanciato correttamente dalla configurazione hook su Windows, Mac e Linux.
 3. **Etichette di genere**: provare ogni genere della sezione 5 con la ricerca reale e misurare quanti brani distinti restituisce.
 4. **Accodamento**: confermare su dispositivo reale che accodare 20 secondi prima della fine produca il passaggio atteso, e come si comporta la riproduzione automatica di Spotify.
 5. **Riconoscimento del dispositivo**: confermare che nome e tipo del dispositivo Spotify desktop identifichino questo PC.
@@ -195,7 +195,7 @@ Le sessioni cloud non hanno browser né accesso a questo PC: login e riproduzion
 ## 14. Prova completa (definizione di finito)
 
 Sul PC dell'autore, con la lista di controllo:
-1. login riuscito e `spotifymix status` pulito;
+1. login riuscito e `codingmix status` pulito;
 2. passaggio da sviluppo a debug e ritorno: il genere cambia dal brano successivo, dopo la soglia;
 3. nessun brano proposto compare negli ascolti o nei preferiti degli ultimi 7 giorni (controllo sull'archivio);
 4. musica in pausa: nessuna azione per 10 minuti di lavoro;

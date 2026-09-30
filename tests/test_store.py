@@ -1,5 +1,5 @@
-from spotifymix.models import Play, SavedTrack, Track
-from spotifymix.store import Store
+from codingmix.models import Play, SavedTrack, Track
+from codingmix.store import Store
 
 DAY = 86400
 NOW = 1_000 * DAY

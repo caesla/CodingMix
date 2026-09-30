@@ -1,4 +1,4 @@
-from spotifymix.models import Playback, Track, make_name_key, parse_iso
+from codingmix.models import Playback, Track, make_name_key, parse_iso
 
 
 def track_json(track_id="t1", name="Song", artist="Artist", **extra):

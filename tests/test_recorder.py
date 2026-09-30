@@ -1,10 +1,10 @@
 from fakes import FakeSpotify, make_track
 
-from spotifymix.models import Play, SavedTrack
-from spotifymix.recorder import Recorder
-from spotifymix.spotify.auth import LoginRequired
-from spotifymix.spotify.client import SpotifyUnavailable
-from spotifymix.store import Store
+from codingmix.models import Play, SavedTrack
+from codingmix.recorder import Recorder
+from codingmix.spotify.auth import LoginRequired
+from codingmix.spotify.client import SpotifyUnavailable
+from codingmix.store import Store
 
 DAY = 86400
 NOW = 1000 * DAY

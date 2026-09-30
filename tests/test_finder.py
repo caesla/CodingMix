@@ -3,10 +3,10 @@ import re
 
 from fakes import FakeSpotify, make_track
 
-from spotifymix.config import ModeConfig, load_config
-from spotifymix.finder import Finder
-from spotifymix.models import Play, Track
-from spotifymix.store import Store
+from codingmix.config import ModeConfig, load_config
+from codingmix.finder import Finder
+from codingmix.models import Play, Track
+from codingmix.store import Store
 
 DAY = 86400
 NOW = 20_000 * DAY

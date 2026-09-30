@@ -5,10 +5,10 @@ from __future__ import annotations
 import logging
 from typing import Protocol
 
-from spotifymix.models import Playback, Track
-from spotifymix.spotify.auth import AuthError, LoginRequired
-from spotifymix.spotify.client import RateLimited, SpotifyError
-from spotifymix.store import Store
+from codingmix.models import Playback, Track
+from codingmix.spotify.auth import AuthError, LoginRequired
+from codingmix.spotify.client import RateLimited, SpotifyError
+from codingmix.store import Store
 
 log = logging.getLogger(__name__)
 

@@ -18,7 +18,7 @@ from urllib.parse import parse_qs, urlencode, urlparse
 
 import httpx
 
-from spotifymix.paths import write_private
+from codingmix.paths import write_private
 
 AUTHORIZE_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
@@ -30,7 +30,7 @@ SCOPES = (
     "user-modify-playback-state",
     "user-read-private",  # needed by search with market=from_token
 )
-KEYRING_SERVICE = "spotifymix"
+KEYRING_SERVICE = "codingmix"
 KEYRING_USER = "refresh_token"
 
 
@@ -87,7 +87,7 @@ def _post_token(
     except ValueError:
         body = {}
     if response.status_code == 400 and body.get("error") == "invalid_grant":
-        raise LoginRequired("Spotify login expired or revoked; run `spotifymix login`")
+        raise LoginRequired("Spotify login expired or revoked; run `codingmix login`")
     if response.status_code != 200 or "access_token" not in body:
         raise AuthError(f"Spotify token request failed (HTTP {response.status_code})")
     return TokenSet(
@@ -162,8 +162,8 @@ class TokenStore:
         self._file.unlink(missing_ok=True)
 
 
-_DONE_PAGE = b"<h1>SpotifyMix: login complete. You can close this tab.</h1>"
-_FAILED_PAGE = b"<h1>SpotifyMix: login failed. Go back to the terminal.</h1>"
+_DONE_PAGE = b"<h1>CodingMix: login complete. You can close this tab.</h1>"
+_FAILED_PAGE = b"<h1>CodingMix: login failed. Go back to the terminal.</h1>"
 
 
 def login_interactive(
