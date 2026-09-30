@@ -14,6 +14,8 @@ log = logging.getLogger(__name__)
 
 IDLE_SECONDS = 15.0
 MAX_WAIT = 30.0
+# Survives a restart, so the service does not cover the same track twice.
+QUEUED_FOR_KEY = "director.queued_for"
 
 
 class ModeSource(Protocol):
@@ -37,7 +39,7 @@ class Director:
         self._device_name = device_name
         self._lead = lead_seconds
         self._last_seen: str | None = None
-        self._queued_for: str | None = None
+        self._queued_for: str | None = store.get_kv(QUEUED_FOR_KEY)
         self._expected_next: str | None = None
         self._aside_mode: str | None = None
         self._paused_until = 0.0
@@ -128,7 +130,7 @@ class Director:
             return self._failure_delay(exc, 10.0)
         if track is None:
             self.last_error = self._finder.last_note or f"no fresh track found for {mode}"
-            self._queued_for = track_id
+            self._cover(track_id)
             return remaining + 1
         try:
             self._client.add_to_queue(track.uri, playback.device_id)
@@ -150,6 +152,10 @@ class Director:
 
     def _mark_queued(self, track_id: str, track: Track, mode: str, now: float) -> None:
         # State first, so a failure while recording cannot trigger a second queue.
-        self._queued_for = track_id
+        self._cover(track_id)
         self._expected_next = track.id
         self._store.add_proposed(track, mode, now)
+
+    def _cover(self, track_id: str) -> None:
+        self._queued_for = track_id
+        self._store.set_kv(QUEUED_FOR_KEY, track_id)

@@ -11,6 +11,8 @@ from spotifymix.models import Track
 from spotifymix.store import Store
 
 MAX_OFFSET = 1000
+# Intros, interludes and skits are too short to be background music.
+MIN_DURATION_MS = 90_000
 
 
 class Finder:
@@ -90,6 +92,8 @@ class Finder:
                 self._totals[query] = total
                 for track in tracks:
                     if track.id in seen_ids or track.name_key in seen_keys:
+                        continue
+                    if track.duration_ms < MIN_DURATION_MS:
                         continue
                     if self._store.is_excluded(track, now, self._days):
                         continue

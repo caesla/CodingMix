@@ -191,6 +191,15 @@ def test_error_after_a_queued_track_does_not_queue_again():
     assert queued_ids(sp) == ["c0"]
 
 
+def test_restart_near_the_end_does_not_queue_again():
+    d, sp, store, modes, finder = make()
+    sp.playback = playing(CUR, 185_000)
+    d.tick(NOW)
+    restarted = Director(sp, finder, store, modes, "MY-PC", lead_seconds=20)
+    restarted.tick(NOW + 5)
+    assert queued_ids(sp) == ["c0"]
+
+
 def test_polls_only_when_due():
     d, sp, *_ = make()
     sp.playback = playing(CUR, 100_000)

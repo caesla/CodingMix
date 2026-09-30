@@ -5,7 +5,7 @@ from fakes import FakeSpotify, make_track
 
 from spotifymix.config import ModeConfig, load_config
 from spotifymix.finder import Finder
-from spotifymix.models import Play
+from spotifymix.models import Play, Track
 from spotifymix.store import Store
 
 DAY = 86400
@@ -33,6 +33,13 @@ def test_returns_fresh_track_for_mode():
     assert track.id.startswith("d")
     assert all(QUERY.match(q) for q, _, _ in sp.search_calls)
     assert all(limit == 10 for _, _, limit in sp.search_calls)
+
+
+def test_skips_tracks_too_short_for_background_music():
+    short = Track("s0", "spotify:track:s0", "Interlude", ("Artist s0",), 23_000)
+    finder, *_ = make({"deep house": [short, *pool(5, "d")]})
+    tracks = [finder.next_track("coding", NOW) for _ in range(5)]
+    assert "s0" not in {t.id for t in tracks if t}
 
 
 def test_skips_excluded_tracks():
