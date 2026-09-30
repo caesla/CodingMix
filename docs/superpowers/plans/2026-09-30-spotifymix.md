@@ -2034,7 +2034,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `auth.TokenStore`, `auth.refresh_access`, `auth.AuthError`, `auth.LoginRequired`, models from Task 3.
 - Produces: `SpotifyError(Exception)`, `RateLimited(SpotifyError)` with attribute `retry_after: float`, `SpotifyUnavailable(SpotifyError)`; `SpotifyClient(http: httpx.Client, client_id: str, tokens: TokenStore, clock: Callable[[], float] = time.time)` with `get_playback() -> Playback | None`, `devices() -> list[Device]`, `add_to_queue(uri: str, device_id: str | None = None) -> None`, `search_tracks(query: str, offset: int = 0, limit: int = 10) -> tuple[list[Track], int]`, `recently_played(limit: int = 50) -> list[Play]`, `saved_tracks(offset: int = 0, limit: int = 50) -> tuple[list[SavedTrack], bool]`.
 
-- [ ] **Step 1: Extend `tests/fakes.py`**
+- [x] **Step 1: Extend `tests/fakes.py`**
 
 Add these imports at the top of the file (after `import socket`):
 ```python
@@ -2102,7 +2102,7 @@ def make_client(api: FakeApi, refresh: str | None = "R1", clock=lambda: 1000.0):
     return SpotifyClient(http, "cid", tokens, clock=clock), tokens
 ```
 
-- [ ] **Step 2: Write the failing tests**
+- [x] **Step 2: Write the failing tests**
 
 `tests/test_client.py`:
 ```python
@@ -2255,12 +2255,12 @@ def test_devices():
     assert client.devices()[0].name == "MY-PC"
 ```
 
-- [ ] **Step 3: Run tests to verify they fail**
+- [x] **Step 3: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_client.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'spotifymix.spotify.client'`.
 
-- [ ] **Step 4: Implement `src/spotifymix/spotify/client.py`**
+- [x] **Step 4: Implement `src/spotifymix/spotify/client.py`**
 
 ```python
 """Thin Spotify Web API wrapper: token refresh, rate limits and error mapping."""
@@ -2409,12 +2409,12 @@ class SpotifyClient:
         return saved, bool(data.get("next"))
 ```
 
-- [ ] **Step 5: Run tests and lint**
+- [x] **Step 5: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A
