@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import secrets
+import tomllib
 from pathlib import Path
 
 from platformdirs import PlatformDirs
@@ -76,3 +77,15 @@ def ensure_service_token() -> str:
     token = secrets.token_urlsafe(32)
     write_private(path, token)
     return token
+
+
+DEFAULT_SERVICE_PORT = 47615
+
+
+def read_service_port(config_file: Path) -> int:
+    """Service port from config.toml without loading the full configuration."""
+    try:
+        data = tomllib.loads(config_file.read_text(encoding="utf-8"))
+        return int(data.get("service", {}).get("port", DEFAULT_SERVICE_PORT))
+    except (OSError, ValueError, TypeError, AttributeError):
+        return DEFAULT_SERVICE_PORT

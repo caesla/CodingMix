@@ -3295,7 +3295,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `paths.config_file`, `paths.service_token_file`, `paths.ensure_service_token`.
 - Produces: `paths.DEFAULT_SERVICE_PORT = 47615`; `paths.read_service_port(config_file: Path) -> int`; `server.TOKEN_HEADER = "X-SpotifyMix-Token"`; `server.make_server(port: int, token: str, on_event: Callable[[dict], None], on_status: Callable[[], dict], on_control: Callable[[dict], dict]) -> ThreadingHTTPServer`; `server.ServiceDown(Exception)`; `server.call_service(method: str, path: str, body: dict | None = None, *, port: int, token: str, timeout: float = 3.0) -> dict` (raises `ServiceDown` when unreachable, `ValueError` with the server's error message on HTTP errors); `hook.main() -> int`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/test_server.py`:
 ```python
@@ -3511,12 +3511,12 @@ def test_hook_survives_garbage_input(monkeypatch):
     assert received == []
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_server.py tests/test_hook.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'spotifymix.server'`.
 
-- [ ] **Step 3: Add to `src/spotifymix/paths.py`**
+- [x] **Step 3: Add to `src/spotifymix/paths.py`**
 
 Add `import tomllib` to the imports, then append:
 ```python
@@ -3533,7 +3533,7 @@ def read_service_port(config_file: Path) -> int:
 ```
 (`tomllib.TOMLDecodeError` is a subclass of `ValueError`.)
 
-- [ ] **Step 4: Implement `src/spotifymix/server.py`**
+- [x] **Step 4: Implement `src/spotifymix/server.py`**
 
 ```python
 """Local HTTP endpoint for hook events and CLI control. Bound to 127.0.0.1 only."""
@@ -3660,7 +3660,7 @@ def call_service(
     return json.loads(raw) if raw else {}
 ```
 
-- [ ] **Step 5: Implement `src/spotifymix/hook.py`**
+- [x] **Step 5: Implement `src/spotifymix/hook.py`**
 
 ```python
 """Claude Code hook: forward the event to the local service.
@@ -3710,12 +3710,12 @@ if __name__ == "__main__":
 
 The `[project.scripts]` entry `spotifymix-hook = "spotifymix.hook:main"` makes the console script call `sys.exit(main())`, so the exit code is 0.
 
-- [ ] **Step 6: Run tests and lint**
+- [x] **Step 6: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed. If `test_hook_exits_zero_when_service_down` is slow on Windows, that is the known Windows loopback connect delay; the 1 s timeout caps it, so the bound of 2 s must still hold. Do not raise the bound above 2 s; fix the code instead.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add -A
