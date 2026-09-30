@@ -86,14 +86,14 @@ I generi sono i valori predefiniti del repository; ogni utente li sovrascrive in
 | # | Modalità | Generi | Segnale principale |
 |---|---|---|---|
 | 1 | Pianificazione | ambient | `permission_mode = plan`, skill di pianificazione |
-| 2 | Brainstorming | post-rock, nu jazz | skill di brainstorming, strumento di domande a scelta multipla |
+| 2 | Brainstorming | post-rock, jazz fusion | skill di brainstorming, strumento di domande a scelta multipla |
 | 3 | Sviluppo | deep house, tech house | modifica di file di codice |
 | 4 | Debug | hip hop, rap | strumento fallito, skill di debug |
 | 5 | Test | techno | comandi di test |
-| 6 | Revisione | lo-fi hip hop | skill di revisione, `git diff` |
-| 7 | Esplorazione | downtempo, trip hop | lettura file, ricerche web, agent Explore |
+| 6 | Revisione | lo-fi | skill di revisione, `git diff` |
+| 7 | Esplorazione | downtempo, electronica | lettura file, ricerche web, agent Explore |
 | 8 | Scrittura | deep house, tech house | modifica di `.md`, `.docx`, documenti |
-| 9 | Interfacce | synthwave, nu disco | modifica di file di stile e pagine, strumenti browser |
+| 9 | Interfacce | synthwave, disco house | modifica di file di stile e pagine, strumenti browser |
 | 10 | Rilascio | funk, disco | `git commit/push`, `gh pr`, deploy |
 | 11 | Orchestrazione | deep house, tech house | più subagent attivi |
 | 12 | In attesa dell'utente | nessun cambio | `Notification` di permesso o inattività |

@@ -42,14 +42,14 @@ follow, shows the exact change it wants to make to your Claude Code settings bef
 | Mode | Genres | Typical signal |
 |---|---|---|
 | planning | ambient | plan mode, planning skills |
-| brainstorming | post-rock, nu jazz | brainstorming skills, multiple choice questions |
+| brainstorming | post-rock, jazz fusion | brainstorming skills, multiple choice questions |
 | coding | deep house, tech house | editing code |
 | debugging | hip hop, rap | failed tools, debugging skills |
 | testing | techno | running tests |
-| reviewing | lo-fi hip hop | review skills, `git diff` |
-| exploring | downtempo, trip hop | reading files, web research |
+| reviewing | lo-fi | review skills, `git diff` |
+| exploring | downtempo, electronica | reading files, web research |
 | writing | deep house, tech house | editing Markdown and documents |
-| ui | synthwave, nu disco | editing styles and pages, browser tools |
+| ui | synthwave, disco house | editing styles and pages, browser tools |
 | release | funk, disco | commit, push, pull requests, deploy |
 | orchestrating | deep house, tech house | several subagents |
 

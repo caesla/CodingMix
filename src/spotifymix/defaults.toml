@@ -23,7 +23,7 @@ fallback = ["chill"]
 
 [modes.brainstorming]
 label = "Brainstorming"
-genres = ["post-rock", "nu jazz"]
+genres = ["post-rock", "jazz fusion"]
 fallback = ["jazz"]
 
 [modes.coding]
@@ -43,12 +43,12 @@ fallback = ["minimal techno"]
 
 [modes.reviewing]
 label = "Code review"
-genres = ["lo-fi hip hop"]
-fallback = ["chillhop"]
+genres = ["lo-fi"]
+fallback = ["chill"]
 
 [modes.exploring]
 label = "Exploring and research"
-genres = ["downtempo", "trip hop"]
+genres = ["downtempo", "electronica"]
 fallback = ["chill"]
 
 [modes.writing]
@@ -58,7 +58,7 @@ fallback = ["house"]
 
 [modes.ui]
 label = "User interfaces"
-genres = ["synthwave", "nu disco"]
+genres = ["synthwave", "disco house"]
 fallback = ["electronic"]
 
 [modes.release]
