@@ -12,6 +12,10 @@ from typing import Any
 
 from spotifymix.config import REGEX_KEYS, Rule
 
+# Claude Code fires UserPromptSubmit also for text it injects on its own
+# (background task results, subagent reports). They are not the user's words.
+INJECTED_PROMPT_PREFIXES = ("<task-notification", "<agent-message")
+
 
 @dataclass(frozen=True)
 class Vote:
@@ -50,6 +54,10 @@ class Classifier:
         self._lock = threading.Lock()
 
     def classify(self, payload: dict[str, Any]) -> tuple[str, float] | None:
+        if payload.get("hook_event_name") == "UserPromptSubmit" and str(
+            payload.get("prompt") or ""
+        ).lstrip().startswith(INJECTED_PROMPT_PREFIXES):
+            return None
         for rule, regexes in self._rules:
             if self._matches(rule, regexes, payload):
                 return rule.mode, rule.weight

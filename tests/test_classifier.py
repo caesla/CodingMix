@@ -39,6 +39,8 @@ def pre(tool, session="s1", **tool_input):
     (pre("Agent", subagent_type="general-purpose"), "orchestrating"),
     (pre("Grep", pattern="x"), "exploring"),
     (pre("WebSearch", query="x"), "exploring"),
+    (pre("Skill", skill="superpowers:requesting-code-review"), "reviewing"),
+    ({**pre("Glob", pattern="*.py"), "agent_id": "a1", "agent_type": "Explore"}, "exploring"),
 ])
 def test_classify_rules(clf, payload, mode):
     assert clf.classify(payload)[0] == mode
@@ -49,6 +51,13 @@ def test_classify_rules(clf, payload, mode):
     {"hook_event_name": "SessionEnd", "reason": "other"},
     {"hook_event_name": "Stop"},
     {"hook_event_name": "UserPromptSubmit", "prompt": "ciao, come va?"},
+    # Claude Code also fires UserPromptSubmit for messages it injects itself.
+    {"hook_event_name": "UserPromptSubmit",
+     "prompt": "<task-notification>\n<status>failed</status> error in the plan review"},
+    {"hook_event_name": "UserPromptSubmit",
+     "prompt": '<agent-message from="a1">\nbug found, see the stack trace'},
+    {"hook_event_name": "UserPromptSubmit", "permission_mode": "plan",
+     "prompt": "  <task-notification>\n<status>completed</status>"},
     {},
 ])
 def test_signals_without_vote(clf, payload):
