@@ -4329,7 +4329,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `paths.data_dir`, `paths.log_dir`.
 - Produces: `AutostartError(Exception)`; `TASK_NAME = "SpotifyMix"`; `LAUNCHD_LABEL = "io.github.caesla.spotifymix"`; `SYSTEMD_UNIT = "spotifymix.service"`; `service_executable() -> Path`; `render_windows_task(exe: Path, user_id: str) -> str`; `render_launchd_plist(exe: Path, log_dir: Path) -> str`; `render_systemd_unit(exe: Path) -> str`; `install(exe: Path, *, platform: str = sys.platform, runner: Runner = default_runner, home: Path | None = None, uid: int | None = None, user_id: str | None = None) -> str`; `uninstall(*, platform: str = sys.platform, runner: Runner = default_runner, home: Path | None = None, uid: int | None = None) -> str`. `Runner = Callable[[Sequence[str]], subprocess.CompletedProcess]`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/test_autostart.py`:
 ```python
@@ -4428,12 +4428,12 @@ def test_unsupported_platform_raises():
         autostart.install(EXE, platform="plan9", runner=FakeRunner())
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_autostart.py -v`
 Expected: FAIL with `ImportError: cannot import name 'autostart'`.
 
-- [ ] **Step 3: Implement `src/spotifymix/autostart.py`**
+- [x] **Step 3: Implement `src/spotifymix/autostart.py`**
 
 ```python
 """Start the service at login: Task Scheduler, launchd or systemd, per platform."""
@@ -4613,12 +4613,12 @@ def uninstall(
     raise AutostartError(f"unsupported platform: {platform}")
 ```
 
-- [ ] **Step 4: Run tests and lint**
+- [x] **Step 4: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed on every OS (the tests pass `platform`, `home` and `uid` explicitly, so `os.getuid` is never called on Windows).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A
