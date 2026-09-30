@@ -1307,7 +1307,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `config.Rule`, `config.load_config`.
 - Produces: `Classifier(rules: Sequence[Rule], window_seconds: float, switch_after_seconds: float)` with `classify(payload: dict) -> tuple[str, float] | None`, `observe(payload: dict, now: float) -> str | None`, `leader(now: float) -> str | None`, `stable_mode(now: float) -> str | None`, `set_manual(mode: str, until: float) -> None`, `clear_manual() -> None`, `snapshot(now: float) -> dict`. `snapshot` keys: `stable`, `leader`, `candidate`, `candidate_since`, `manual`, `manual_until`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/test_classifier.py`:
 ```python
@@ -1430,12 +1430,12 @@ def test_manual_mode_wins_until_it_expires(clf):
     assert clf.stable_mode(102) == "coding"
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_classifier.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'spotifymix.classifier'`.
 
-- [ ] **Step 3: Implement `src/spotifymix/classifier.py`**
+- [x] **Step 3: Implement `src/spotifymix/classifier.py`**
 
 ```python
 """Turns Claude Code hook payloads into a stable activity mode."""
@@ -1579,12 +1579,12 @@ class Classifier:
             }
 ```
 
-- [ ] **Step 4: Run tests and lint**
+- [x] **Step 4: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed. If `test_switch_needs_three_minutes_of_leadership` fails, check that `stable_mode` is called on every observed event (it is, from `observe`) and that the candidate timer starts at the first evaluation where debugging leads (second 200).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A
