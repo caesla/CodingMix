@@ -2942,7 +2942,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `Store.add_proposed` (Task 3), client methods and exceptions (Task 6), `Finder.next_track` and `last_note` (Task 8), any object with `stable_mode(now) -> str | None` (the `Classifier` from Task 4).
 - Produces: `Director(client, finder, store: Store, modes, device_name: str | None, lead_seconds: float)` with `tick(now: float) -> float` (seconds until it wants to run again), `pause(until: float) -> None`, `resume() -> None`, `clear_aside() -> None`, properties `aside_mode: str | None`, `paused_until: float | None`, attributes `last_action: str | None`, `last_error: str | None`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/test_director.py`:
 ```python
@@ -3118,12 +3118,12 @@ def test_polls_only_when_due():
     assert d.tick(NOW + 10) == 20
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_director.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'spotifymix.director'`.
 
-- [ ] **Step 3: Implement `src/spotifymix/director.py`**
+- [x] **Step 3: Implement `src/spotifymix/director.py`**
 
 ```python
 """Watches Spotify playback and queues the next track of the current mode."""
@@ -3268,12 +3268,12 @@ class Director:
         return remaining + 1
 ```
 
-- [ ] **Step 4: Run tests and lint**
+- [x] **Step 4: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed. Check against the tests: `test_waits_until_lead_time` expects `min(30, 100 - 20) = 30` and `min(30, 30 - 20) = 10`; `test_polls_only_when_due` expects the second tick to return the 20 s left until the planned poll.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A
