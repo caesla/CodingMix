@@ -2700,7 +2700,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `ModeConfig` (Task 2), `Store.is_excluded` (Task 3), `client.search_tracks` (Task 6).
 - Produces: `Finder(client, store: Store, modes: dict[str, ModeConfig], exclusion_days: int, rng: random.Random | None = None, buffer_size: int = 10, refill_below: int = 3, max_queries: int = 6, page_size: int = 10)` with `next_track(mode_id: str, now: float) -> Track | None` and attribute `last_note: str | None`. Client exceptions propagate to the caller.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/test_finder.py`:
 ```python
@@ -2806,12 +2806,12 @@ def test_unknown_mode_returns_none():
     assert "unknown mode" in finder.last_note
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_finder.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'spotifymix.finder'`.
 
-- [ ] **Step 3: Implement `src/spotifymix/finder.py`**
+- [x] **Step 3: Implement `src/spotifymix/finder.py`**
 
 ```python
 """Finds tracks of a genre that were not heard, saved or proposed in the last days."""
@@ -2916,12 +2916,12 @@ class Finder:
                 self.last_note = f"used fallback genres for {mode.id}"
 ```
 
-- [ ] **Step 4: Run tests and lint**
+- [x] **Step 4: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed. Note on `test_offsets_stay_inside_results`: the first query of each combination uses offset 0, later ones use `randrange(0, total - 10 + 1)`, so `offset + 10 <= 25` always holds.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A
