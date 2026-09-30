@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import re
 import socket
 
 import httpx
 
 from spotifymix import paths
+from spotifymix.models import Playback, Track
 from spotifymix.spotify.auth import TokenStore
 
 
@@ -92,3 +94,86 @@ def make_client(api: FakeApi, refresh: str | None = "R1", clock=lambda: 1000.0):
         tokens.save(refresh)
     http = httpx.Client(transport=httpx.MockTransport(api))
     return SpotifyClient(http, "cid", tokens, clock=clock), tokens
+
+
+def make_track(i: int, prefix: str = "t") -> Track:
+    track_id = f"{prefix}{i}"
+    return Track(track_id, f"spotify:track:{track_id}", f"Song {track_id}",
+                 (f"Artist {track_id}",), 200000)
+
+
+def playing(track, progress_ms, *, is_playing=True, device_type="Computer",
+            device_name="MY-PC", context=None) -> Playback:
+    return Playback(is_playing, "dev1", device_name, device_type, track, progress_ms, context)
+
+
+class FakeSpotify:
+    """In-memory stand-in for SpotifyClient."""
+
+    def __init__(self) -> None:
+        self.playback: Playback | None = None
+        self.queued: list[tuple[str, str | None]] = []
+        self.search_pool: dict[str, list[Track]] = {}
+        self.search_calls: list[tuple[str, int, int]] = []
+        self.recent: list = []
+        self.recent_calls = 0
+        self.saved_pages: list[tuple[list, bool]] = []
+        self.saved_calls: list[int] = []
+        self.error: Exception | None = None
+        self.queue_error: Exception | None = None
+
+    def _maybe_fail(self) -> None:
+        if self.error is not None:
+            raise self.error
+
+    def get_playback(self):
+        self._maybe_fail()
+        return self.playback
+
+    def devices(self):
+        self._maybe_fail()
+        return []
+
+    def add_to_queue(self, uri, device_id=None):
+        self._maybe_fail()
+        if self.queue_error is not None:
+            raise self.queue_error
+        self.queued.append((uri, device_id))
+
+    def search_tracks(self, query, offset=0, limit=10):
+        self._maybe_fail()
+        self.search_calls.append((query, offset, limit))
+        genre = re.search(r'genre:"([^"]+)"', query).group(1)
+        pool = self.search_pool.get(genre, [])
+        return pool[offset:offset + limit], len(pool)
+
+    def recently_played(self, limit=50):
+        self._maybe_fail()
+        self.recent_calls += 1
+        return list(self.recent[:limit])
+
+    def saved_tracks(self, offset=0, limit=50):
+        self._maybe_fail()
+        self.saved_calls.append(offset)
+        index = offset // limit
+        return self.saved_pages[index] if index < len(self.saved_pages) else ([], False)
+
+
+class FakeModes:
+    def __init__(self, mode):
+        self.mode = mode
+
+    def stable_mode(self, now):
+        return self.mode
+
+
+class FakeFinder:
+    def __init__(self):
+        self.pools: dict[str, list[Track]] = {}
+        self.calls = 0
+        self.last_note = None
+
+    def next_track(self, mode, now):
+        self.calls += 1
+        pool = self.pools.get(mode, [])
+        return pool.pop(0) if pool else None

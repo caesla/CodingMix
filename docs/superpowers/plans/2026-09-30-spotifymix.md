@@ -2437,7 +2437,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Produces: `Recorder(client, store: Store, recent_every: float, saved_every: float, exclusion_days: int)` with `maybe_run(now: float) -> None`, `sync_recent(now: float) -> int`, `sync_saved(now: float, max_pages: int = 20) -> int`, attribute `last_error: str | None`.
 - Produces (fakes): `make_track(i: int, prefix: str = "t") -> Track`; `playing(track, progress_ms, *, is_playing=True, device_type="Computer", device_name="MY-PC", context=None) -> Playback`; `FakeSpotify` (attributes `playback`, `queued`, `search_pool: dict[str, list[Track]]`, `search_calls`, `recent`, `recent_calls`, `saved_pages`, `saved_calls`, `error`, `queue_error`; same public methods as `SpotifyClient`); `FakeModes(mode)` with `mode` attribute and `stable_mode(now)`; `FakeFinder` with `pools: dict[str, list[Track]]`, `calls: int`, `last_note`, `next_track(mode, now)`.
 
-- [ ] **Step 1: Extend `tests/fakes.py`**
+- [x] **Step 1: Extend `tests/fakes.py`**
 
 Add these imports at the top of the file:
 ```python
@@ -2531,7 +2531,7 @@ class FakeFinder:
         return pool.pop(0) if pool else None
 ```
 
-- [ ] **Step 2: Write the failing tests**
+- [x] **Step 2: Write the failing tests**
 
 `tests/test_recorder.py`:
 ```python
@@ -2605,12 +2605,12 @@ def test_errors_are_recorded_not_raised():
     assert rec.last_error is None
 ```
 
-- [ ] **Step 3: Run tests to verify they fail**
+- [x] **Step 3: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_recorder.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'spotifymix.recorder'`.
 
-- [ ] **Step 4: Implement `src/spotifymix/recorder.py`**
+- [x] **Step 4: Implement `src/spotifymix/recorder.py`**
 
 ```python
 """Keeps the local 7-day history in sync with Spotify."""
@@ -2674,12 +2674,12 @@ class Recorder:
         return stored
 ```
 
-- [ ] **Step 5: Run tests and lint**
+- [x] **Step 5: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A
