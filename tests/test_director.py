@@ -1,3 +1,4 @@
+import pytest
 from fakes import FakeFinder, FakeModes, FakeSpotify, make_track, playing
 
 from spotifymix.director import Director
@@ -160,6 +161,34 @@ def test_queue_failure_is_retried():
     sp.queue_error = None
     d.tick(NOW + 10)
     assert len(sp.queued) == 1
+
+
+def test_unexpected_queue_error_is_not_retried():
+    # The request may have reached Spotify: a second attempt could queue twice.
+    d, sp, store, *_ = make()
+    sp.playback = playing(CUR, 185_000)
+    calls = []
+
+    def add_to_queue(uri, device_id=None):
+        calls.append(uri)
+        raise ValueError("unreadable response")
+
+    sp.add_to_queue = add_to_queue
+    d.tick(NOW)
+    d.tick(NOW + 5)
+    assert len(calls) == 1
+    assert store.recent_proposed_ids() == {"c0"}
+    assert d.last_error
+
+
+def test_error_after_a_queued_track_does_not_queue_again():
+    d, sp, store, *_ = make()
+    sp.playback = playing(CUR, 185_000)
+    store.add_proposed = lambda *args: (_ for _ in ()).throw(RuntimeError("disk full"))
+    with pytest.raises(RuntimeError):
+        d.tick(NOW)
+    d.tick(NOW + 5)
+    assert queued_ids(sp) == ["c0"]
 
 
 def test_polls_only_when_due():

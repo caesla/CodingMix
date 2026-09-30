@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Protocol
 
-from spotifymix.models import Playback
+from spotifymix.models import Playback, Track
 from spotifymix.spotify.auth import AuthError, LoginRequired
 from spotifymix.spotify.client import RateLimited, SpotifyError
 from spotifymix.store import Store
@@ -124,17 +124,32 @@ class Director:
     ) -> float:
         try:
             track = self._finder.next_track(mode, now)
-            if track is None:
-                self.last_error = self._finder.last_note or f"no fresh track found for {mode}"
-                self._queued_for = track_id
-                return remaining + 1
+        except (SpotifyError, AuthError) as exc:
+            return self._failure_delay(exc, 10.0)
+        if track is None:
+            self.last_error = self._finder.last_note or f"no fresh track found for {mode}"
+            self._queued_for = track_id
+            return remaining + 1
+        try:
             self._client.add_to_queue(track.uri, playback.device_id)
         except (SpotifyError, AuthError) as exc:
             return self._failure_delay(exc, 10.0)
-        self._store.add_proposed(track, mode, now)
-        self._queued_for = track_id
-        self._expected_next = track.id
+        except Exception as exc:
+            # Unknown outcome: the track may be in the queue already. Skipping
+            # one track is better than queueing it twice, and recording it keeps
+            # it out of the next seven days.
+            log.exception("queueing failed with an unexpected error; not retrying")
+            self._mark_queued(track_id, track, mode, now)
+            self.last_error = f"queueing may have failed: {exc}"
+            return remaining + 1
+        self._mark_queued(track_id, track, mode, now)
         self.last_action = f"queued {track.id} {track.name} by {', '.join(track.artists)} ({mode})"
         self.last_error = None
         log.info("queued a %s track", mode)
         return remaining + 1
+
+    def _mark_queued(self, track_id: str, track: Track, mode: str, now: float) -> None:
+        # State first, so a failure while recording cannot trigger a second queue.
+        self._queued_for = track_id
+        self._expected_next = track.id
+        self._store.add_proposed(track, mode, now)
