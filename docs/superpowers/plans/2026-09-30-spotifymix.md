@@ -3736,7 +3736,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: everything from Tasks 1 to 10.
 - Produces: `Service(cfg: Config, store: Store, classifier: Classifier, director: Director, recorder: Recorder, clock: Callable[[], float] = time.time)` with `handle_event(payload: dict) -> None`, `control(command: dict) -> dict`, `status() -> dict`, `step() -> float`, `run_forever(stop: threading.Event) -> None`; module constant `LOOP_MAX_SLEEP = 5.0`; `build(cfg: Config) -> Service`; `run() -> int`; `main() -> None` (entry point of `spotifymix-service`). `control` accepts `{"action": "mode", "mode": str, "seconds": float | None}`, `{"action": "pause", "seconds": float}`, `{"action": "resume"}` and raises `ValueError` otherwise. `status()` keys: `mode`, `leader`, `candidate`, `manual`, `manual_until`, `paused_until`, `aside_mode`, `last_action`, `last_error`, `device_name`, `history`, `recent_events`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/test_service.py`:
 ```python
@@ -3860,12 +3860,12 @@ def test_run_forever_survives_errors_and_stops(monkeypatch):
     assert len(calls) == 2
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_service.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'spotifymix.service'`.
 
-- [ ] **Step 3: Implement `src/spotifymix/service.py`**
+- [x] **Step 3: Implement `src/spotifymix/service.py`**
 
 ```python
 """The SpotifyMix background service: wiring, main loop and entry point."""
@@ -4041,12 +4041,12 @@ def main() -> None:
     sys.exit(run())
 ```
 
-- [ ] **Step 4: Run tests and lint**
+- [x] **Step 4: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A
