@@ -5271,9 +5271,10 @@ Expected: `clean`.
 Run:
 ```bash
 git grep -nIiE "gmail|[A-Z]:\\\\Users\\\\|/home/[a-z]|claude-config" -- . ':!docs/superpowers/plans' || echo "no personal data"
-git grep -nP "\x{2014}|\x{2013}" -- . || echo "no dashes"
+git grep -nP "(*UTF)[\x{2013}\x{2014}]" -- .; test $? -eq 1 && echo "no dashes"
 ```
 Expected: `no personal data` and `no dashes`. (The plan is excluded from the first search because it contains this very command; the GitHub noreply address in `CLAUDE.md` is public on purpose and is not searched for.)
+The dash check starts with `(*UTF)` so that PCRE reads `\x{2013}` and `\x{2014}` as Unicode code points even when no UTF-8 locale is set; without it git fails with `character code point value ... is too large`. It prints `no dashes` only when git grep exits 1 (no match): a match (exit 0) or an error (exit 128) prints nothing extra, so a broken command can no longer pass as clean.
 
 - [x] **Step 4: Run everything and commit**
 
