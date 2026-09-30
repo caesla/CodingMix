@@ -4066,7 +4066,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 **Interfaces:**
 - Produces: `HOOK_EVENTS = ("PreToolUse", "PostToolUseFailure", "UserPromptSubmit", "SubagentStart")`; `MARKER = "spotifymix-hook"`; `SettingsError(Exception)`; `settings_path(config_dir: Path) -> Path`; `hook_command(executable: Path) -> str`; `load_settings(path: Path) -> dict`; `plan_install(settings: dict, command: str) -> dict`; `plan_uninstall(settings: dict) -> dict`; `write_settings(path: Path, data: dict) -> Path | None` (returns the backup path); `diff_text(old: dict, new: dict) -> str`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/test_claude_settings.py`:
 ```python
@@ -4173,12 +4173,12 @@ def test_settings_path_and_diff(tmp_path):
     assert '+  "a": 1' in text
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run pytest tests/test_claude_settings.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'spotifymix.claude_settings'`.
 
-- [ ] **Step 3: Implement `src/spotifymix/claude_settings.py`**
+- [x] **Step 3: Implement `src/spotifymix/claude_settings.py`**
 
 ```python
 """Adds and removes the SpotifyMix hooks in Claude Code's settings.json."""
@@ -4303,12 +4303,12 @@ def diff_text(old: dict[str, Any], new: dict[str, Any]) -> str:
 
 Note: `plan_uninstall` only deletes an empty `hooks` table; with `FOREIGN` the table keeps `SessionStart` and `PreToolUse`, so `test_uninstall_restores_the_original` holds.
 
-- [ ] **Step 4: Run tests and lint**
+- [x] **Step 4: Run tests and lint**
 
 Run: `uv run pytest -q && uv run ruff check`
 Expected: all passed.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A
