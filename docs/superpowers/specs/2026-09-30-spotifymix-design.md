@@ -67,7 +67,7 @@ Archivio SQLite (cartella utente)          Spotify Web API
 | `recorder` | ogni 10 minuti salva gli ultimi ascolti; ogni 30 minuti aggiorna i preferiti | client Spotify, store |
 | `spotify` | chiamate HTTP, login PKCE, rinnovo token, attesa su errore 429 | keyring |
 | `store` | SQLite: ascolti, preferiti, brani proposti, stato | nessuna |
-| `cli` | `setup`, `stato`, `modo <nome>`, `pausa <durata>`, `riprendi`, `service install/uninstall` | tutti |
+| `cli` | `setup`, `status`, `mode <nome>`, `pause <durata>`, `resume`, `service install/uninstall` (nomi in inglese per il pubblico internazionale) | tutti |
 
 Ogni unità si prova da sola con dati finti. Il classificatore non sa nulla di Spotify; il cercatore non sa nulla di Claude Code.
 
@@ -106,7 +106,7 @@ Le etichette dei generi vanno verificate contro la ricerca reale di Spotify (sez
 1. Ogni segnale produce al massimo un voto, secondo le regole in ordine di priorità (vince la prima che si applica): manuale, debug, pianificazione, brainstorming, rilascio, test, revisione, orchestrazione, interfacce, scrittura, sviluppo, esplorazione.
 2. Le parole del messaggio dell'utente (es. "errore", "non funziona") aggiungono un voto più leggero, mai decisivo da solo.
 3. La **modalità stabile** è quella con più voti negli ultimi 3 minuti, sommando tutte le sessioni di Claude Code aperte. Cambia solo se la nuova vince per almeno 3 minuti consecutivi.
-4. Un comando manuale (`spotifymix modo debug`) ha precedenza assoluta fino a scadenza (predefinita 1 ora) o fino a `spotifymix riprendi`.
+4. Un comando manuale (`spotifymix mode debugging`) ha precedenza assoluta fino a scadenza (predefinita 1 ora) o fino a `spotifymix resume`.
 5. Le regole stanno in un file dati leggibile, non sparse nel codice.
 
 **Riservatezza dei segnali:** i segnali contengono testo dei messaggi e percorsi di file. Il servizio li usa solo in memoria; su disco salva unicamente modalità, orario e nome dell'evento. Mai il testo dei messaggi, mai i percorsi.
@@ -123,7 +123,7 @@ Il regista controlla il brano in corso (ogni 5 secondi solo verso la fine del br
 Il servizio non dipende dalle sessioni: finché la musica suona continua ad accodare brani dell'ultima modalità stabile. L'attesa dell'utente (modalità 12) non produce voti.
 
 ### 7.4 Se l'utente sceglie da sé (dedotto, da confermare)
-Se l'utente fa partire da Spotify una propria playlist, un album o un brano, SpotifyMix se ne accorge (il brano in corso non è uno di quelli accodati da lui) e si fa da parte fino al successivo cambio di modalità stabile o a `spotifymix riprendi`.
+Se l'utente fa partire da Spotify una propria playlist, un album o un brano, SpotifyMix se ne accorge (il brano in corso non è uno di quelli accodati da lui) e si fa da parte fino al successivo cambio di modalità stabile o a `spotifymix resume`.
 
 ### 7.5 Scelta dei brani
 - Ricerca `genre:"<genere>"` su brani, con spostamento casuale nei risultati e intervalli di anni variabili, per evitare di pescare sempre i brani più famosi.
@@ -142,7 +142,7 @@ Coperti: tutto ciò che è stato ascoltato mentre il servizio era acceso (contro
 | Errore nell'aggancio | intercettato ovunque, uscita sempre 0 |
 | Spotify risponde 429 (limite) | attende il tempo indicato da Spotify, riprova; la musica in corso non si tocca |
 | Spotify non raggiungibile | riprova con attese crescenti; registra nel log |
-| Token scaduto | rinnovo automatico; se fallisce, stato "login richiesto" in `spotifymix stato` e nel log |
+| Token scaduto | rinnovo automatico; se fallisce, stato "login richiesto" in `spotifymix status` e nel log |
 | Genere senza risultati | genere di riserva, voce nel log |
 | Nessun candidato dopo i filtri | allarga intervallo di anni e spostamenti; se ancora nulla, non accoda e registra |
 | Arresto del servizio | riavvio dal gestore di sistema |
@@ -162,7 +162,7 @@ Coperti: tutto ciò che è stato ascoltato mentre il servizio era acceso (contro
 
 1. `uv tool install git+https://github.com/caesla/spotifymix`
 2. `spotifymix setup`, che guida a: creare l'app su developer.spotify.com con il redirect locale indicato; incollare il Client ID; fare login nel browser; scegliere il nome del dispositivo; aggiungere l'aggancio alle impostazioni utente di Claude Code (mostra la modifica e chiede conferma; salva una copia di riserva); installare l'avvio automatico.
-3. `spotifymix stato` per vedere modalità, dispositivo, ultimo brano accodato ed eventuali errori.
+3. `spotifymix status` per vedere modalità, dispositivo, ultimo brano accodato ed eventuali errori.
 4. `spotifymix uninstall` rimuove aggancio e avvio automatico.
 
 ## 11. Verifiche da fare prima o durante l'implementazione
@@ -195,7 +195,7 @@ Le sessioni cloud non hanno browser né accesso a questo PC: login e riproduzion
 ## 14. Prova completa (definizione di finito)
 
 Sul PC dell'autore, con la lista di controllo:
-1. login riuscito e `spotifymix stato` pulito;
+1. login riuscito e `spotifymix status` pulito;
 2. passaggio da sviluppo a debug e ritorno: il genere cambia dal brano successivo, dopo la soglia;
 3. nessun brano proposto compare negli ascolti o nei preferiti degli ultimi 7 giorni (controllo sull'archivio);
 4. musica in pausa: nessuna azione per 10 minuti di lavoro;

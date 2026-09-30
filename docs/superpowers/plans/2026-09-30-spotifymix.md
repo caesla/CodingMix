@@ -5147,7 +5147,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Modify: `README.md` (replace entirely)
 - Modify: `docs/superpowers/specs/2026-09-30-spotifymix-design.md` (command names)
 
-- [ ] **Step 1: Replace `README.md`**
+- [x] **Step 1: Replace `README.md`**
 
 ````markdown
 # SpotifyMix
@@ -5253,7 +5253,7 @@ Design document (Italian): [docs/superpowers/specs/2026-09-30-spotifymix-design.
 MIT
 ````
 
-- [ ] **Step 2: Align the spec's command names**
+- [x] **Step 2: Align the spec's command names**
 
 In `docs/superpowers/specs/2026-09-30-spotifymix-design.md` apply these replacements:
 - In section 1, list "Richiesto esplicitamente": leave as is.
@@ -5266,7 +5266,7 @@ Then check that no Italian command name is left:
 Run: `grep -nE "spotifymix (stato|modo|pausa|riprendi)" docs/superpowers/specs/2026-09-30-spotifymix-design.md || echo clean`
 Expected: `clean`.
 
-- [ ] **Step 3: Check the repository for personal data and dashes**
+- [x] **Step 3: Check the repository for personal data and dashes**
 
 Run:
 ```bash
@@ -5275,7 +5275,7 @@ git grep -nP "\x{2014}|\x{2013}" -- . || echo "no dashes"
 ```
 Expected: `no personal data` and `no dashes`. (The plan is excluded from the first search because it contains this very command; the GitHub noreply address in `CLAUDE.md` is public on purpose and is not searched for.)
 
-- [ ] **Step 4: Run everything and commit**
+- [x] **Step 4: Run everything and commit**
 
 ```bash
 uv run pytest -q && uv run ruff check
@@ -5285,7 +5285,7 @@ git commit -m "docs: README and spec command names
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ```
 
-- [ ] **Step 5: Push and confirm CI**
+- [x] **Step 5: Push and confirm CI**
 
 ```bash
 git push -u origin HEAD
