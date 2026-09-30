@@ -114,3 +114,69 @@ def test_spotify_errors_become_readable_messages(monkeypatch, capsys):
     err = capsys.readouterr().err
     assert "HTTP 403" in err
     assert "Traceback" not in err
+
+
+def _fake_setup(monkeypatch, answers, hooks_result=0, service_result=0):
+    replies = iter(["my-client-id", *answers])
+    monkeypatch.setattr("builtins.input", lambda prompt="": next(replies))
+    monkeypatch.setattr(cli, "cmd_login", lambda args: 0)
+    monkeypatch.setattr(cli, "_choose_device", lambda cfg: "MY-PC")
+    done = []
+    monkeypatch.setattr(cli, "cmd_hooks", lambda args, apply_by_default=False: done.append(
+        ("hooks", apply_by_default)) or hooks_result)
+    monkeypatch.setattr(cli, "cmd_service", lambda args: done.append(
+        ("service", args.action)) or service_result)
+    return done
+
+
+def test_setup_installs_hooks_and_autostart_by_default(monkeypatch, capsys):
+    done = _fake_setup(monkeypatch, [""])
+    assert cli.run(["setup"]) == 0
+    assert done == [("hooks", True), ("service", "install")]
+    assert "Setup complete" in capsys.readouterr().out
+
+
+def test_setup_lists_what_was_skipped(monkeypatch, capsys):
+    done = _fake_setup(monkeypatch, ["n"], hooks_result=1)
+    assert cli.run(["setup"]) == 0
+    assert done == [("hooks", True)]
+    out = capsys.readouterr().out
+    assert "Setup complete" not in out
+    assert "codingmix hooks install" in out
+    assert "codingmix service install" in out
+
+
+def test_setup_reports_a_failed_step(monkeypatch, capsys):
+    _fake_setup(monkeypatch, ["y"], service_result=1)
+    assert cli.run(["setup"]) == 0
+    out = capsys.readouterr().out
+    assert "Setup complete" not in out
+    assert "codingmix service install" in out
+    assert "codingmix hooks install" not in out
+
+
+def test_hooks_apply_by_default_writes_on_enter(monkeypatch, tmp_path, capsys):
+    monkeypatch.setattr(cli.shutil, "which", lambda name: "/opt/bin/codingmix-hook")
+    monkeypatch.setattr("builtins.input", lambda prompt="": "")
+    args = argparse.Namespace(action="install", yes=False)
+    assert cli.cmd_hooks(args, apply_by_default=True) == 0
+    assert "codingmix-hook" in (tmp_path / "claude" / "settings.json").read_text(encoding="utf-8")
+    assert "Changes to" in capsys.readouterr().out
+
+
+def test_confirm_defaults(monkeypatch):
+    monkeypatch.setattr("builtins.input", lambda prompt="": "")
+    assert cli._confirm("Go?", default=True) is True
+    assert cli._confirm("Go?") is False
+    monkeypatch.setattr("builtins.input", lambda prompt="": "N")
+    assert cli._confirm("Go?", default=True) is False
+
+
+def test_uninstall_prints_a_shared_folder_once(monkeypatch, tmp_path, capsys):
+    shared = tmp_path / "CodingMix"
+    monkeypatch.setattr(cli.paths, "config_dir", lambda: shared)
+    monkeypatch.setattr(cli.paths, "data_dir", lambda: shared)
+    monkeypatch.setattr(cli, "cmd_hooks", lambda args: 0)
+    monkeypatch.setattr(cli, "cmd_service", lambda args: 0)
+    assert cli.run(["uninstall", "--yes"]) == 0
+    assert capsys.readouterr().out.count(str(shared)) == 1

@@ -83,8 +83,11 @@ def format_status(status: dict) -> str:
     return "\n".join(lines)
 
 
-def _confirm(question: str) -> bool:
-    return input(f"{question} [y/N] ").strip().lower() in ("y", "yes")
+def _confirm(question: str, default: bool = False) -> bool:
+    answer = input(f"{question} {'[Y/n]' if default else '[y/N]'} ").strip().lower()
+    if not answer:
+        return default
+    return answer in ("y", "yes")
 
 
 def _config() -> Config:
@@ -180,7 +183,7 @@ def cmd_check_genres(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_hooks(args: argparse.Namespace) -> int:
+def cmd_hooks(args: argparse.Namespace, apply_by_default: bool = False) -> int:
     path = settings_path(paths.claude_config_dir())
     try:
         current = load_settings(path)
@@ -200,7 +203,7 @@ def cmd_hooks(args: argparse.Namespace) -> int:
         print("Nothing to change.")
         return 0
     print(f"Changes to {path}:\n{diff_text(current, new)}")
-    if not args.yes and not _confirm("Apply these changes?"):
+    if not args.yes and not _confirm("Apply these changes?", default=apply_by_default):
         print("Aborted, nothing written.")
         return 1
     backup = write_settings(path, new)
@@ -284,10 +287,17 @@ def cmd_setup(args: argparse.Namespace) -> int:
     save_user_settings(cfg_file, device_name=_choose_device(_config()))
     paths.ensure_service_token()
     print(f"Settings saved in {cfg_file}")
-    if _confirm("Add the CodingMix hooks to Claude Code now?"):
-        cmd_hooks(argparse.Namespace(action="install", yes=False))
-    if _confirm("Start CodingMix automatically when you log in?"):
-        cmd_service(argparse.Namespace(action="install"))
+    missing = []
+    if cmd_hooks(argparse.Namespace(action="install", yes=False), apply_by_default=True) != 0:
+        missing.append("Claude Code hooks: run `codingmix hooks install`")
+    if not (_confirm("Start CodingMix automatically when you log in?", default=True)
+            and cmd_service(argparse.Namespace(action="install")) == 0):
+        missing.append("automatic start: run `codingmix service install`")
+    if missing:
+        print("Setup is not finished. CodingMix will not play anything until you add:")
+        for item in missing:
+            print(f"  - {item}")
+        return 0
     print("Setup complete. Play something in Spotify on this computer, "
           "then run `codingmix status`.")
     return 0
@@ -297,7 +307,8 @@ def cmd_uninstall(args: argparse.Namespace) -> int:
     cmd_hooks(argparse.Namespace(action="uninstall", yes=args.yes))
     cmd_service(argparse.Namespace(action="uninstall"))
     print("Your settings and history are kept in:")
-    print(f"  {paths.config_dir()}\n  {paths.data_dir()}")
+    for folder in dict.fromkeys((paths.config_dir(), paths.data_dir())):
+        print(f"  {folder}")
     print("Delete those folders and run `codingmix logout` to remove everything.")
     return 0
 

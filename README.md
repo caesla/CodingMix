@@ -28,7 +28,8 @@ codingmix setup
 
 `setup` walks you through creating the Spotify app, logs you in, asks which Spotify device to
 follow, shows the exact change it wants to make to your Claude Code settings before writing it
-(a backup is saved), and can register the service to start at login.
+(a backup is saved), and registers the service to start at login. Both steps are accepted
+with Enter; if you skip one, `setup` prints the command to add it later.
 
 ## How it works
 
