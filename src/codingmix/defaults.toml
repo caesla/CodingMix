@@ -18,13 +18,13 @@ manual_default_seconds = 3600
 
 [modes.planning]
 label = "Planning"
-genres = ["ambient"]
-fallback = ["chill"]
+genres = ["deep house", "tech house"]
+fallback = ["house"]
 
 [modes.brainstorming]
 label = "Brainstorming"
-genres = ["post-rock", "jazz fusion"]
-fallback = ["jazz"]
+genres = ["melodic house", "progressive house"]
+fallback = ["house"]
 
 [modes.coding]
 label = "Coding"
@@ -33,8 +33,8 @@ fallback = ["house"]
 
 [modes.debugging]
 label = "Debugging"
-genres = ["hip hop", "rap"]
-fallback = ["trap"]
+genres = ["french house", "disco house", "funky house"]
+fallback = ["house"]
 
 [modes.testing]
 label = "Testing"
@@ -43,13 +43,13 @@ fallback = ["minimal techno"]
 
 [modes.reviewing]
 label = "Code review"
-genres = ["lo-fi"]
-fallback = ["chill"]
+genres = ["deep house", "tech house"]
+fallback = ["house"]
 
 [modes.exploring]
 label = "Exploring and research"
-genres = ["downtempo", "electronica"]
-fallback = ["chill"]
+genres = ["minimal house", "ambient house"]
+fallback = ["deep house"]
 
 [modes.writing]
 label = "Writing"

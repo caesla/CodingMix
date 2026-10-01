@@ -91,7 +91,7 @@ def test_hooks_install_asks_before_writing(monkeypatch, tmp_path):
 def test_modes_lists_all(capsys):
     assert cli.run(["modes"]) == 0
     out = capsys.readouterr().out
-    assert "debugging" in out and "hip hop" in out
+    assert "debugging" in out and "french house" in out
 
 
 def test_check_genres_reports_weak_labels(monkeypatch, capsys):

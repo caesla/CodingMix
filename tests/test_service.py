@@ -25,7 +25,7 @@ def build(store=None):
     sp = FakeSpotify()
     sp.search_pool = {
         genre: [make_track(i, genre.replace(" ", "")[:4]) for i in range(30)]
-        for genre in ("deep house", "tech house", "hip hop", "rap")
+        for genre in ("deep house", "tech house", "french house", "disco house", "funky house")
     }
     store = store or Store(":memory:")
     clock = [NOW]
@@ -69,8 +69,8 @@ def test_manual_mode_control():
     assert svc.status()["manual"] == "debugging"
     sp.playback = playing(CUR, 185_000)
     svc.step()
-    # Track ids start with the first 4 letters of the genre: "hiph..." or "rap...".
-    assert queued_prefixes(sp)[0].startswith(("hiph", "rap"))
+    # Track ids start with the first 4 letters of the genre, e.g. "fren..." or "disc...".
+    assert queued_prefixes(sp)[0].startswith(("fren", "disc", "funk"))
 
 
 def test_unknown_mode_and_action_are_rejected():

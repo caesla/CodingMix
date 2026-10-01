@@ -11,7 +11,7 @@ def test_defaults_define_eleven_modes():
     assert cfg.modes["coding"].genres == ("deep house", "tech house")
     assert cfg.modes["writing"].genres == cfg.modes["coding"].genres
     assert cfg.modes["orchestrating"].genres == cfg.modes["coding"].genres
-    assert cfg.modes["debugging"].genres == ("hip hop", "rap")
+    assert cfg.modes["debugging"].genres == ("french house", "disco house", "funky house")
     assert cfg.client_id is None
     assert cfg.service_port == 47615
     assert cfg.exclusion_days == 7
@@ -23,7 +23,7 @@ def test_user_file_overrides_one_mode(tmp_path):
     user.write_text('[modes.debugging]\ngenres = ["drum and bass"]\n', encoding="utf-8")
     cfg = load_config(user)
     assert cfg.modes["debugging"].genres == ("drum and bass",)
-    assert cfg.modes["debugging"].fallback == ("trap",)
+    assert cfg.modes["debugging"].fallback == ("house",)
     assert cfg.modes["coding"].genres == ("deep house", "tech house")
 
 
